@@ -1,6 +1,7 @@
 # FastMessaging ⚡💬
 
 [![Release](https://jitpack.io/v/andrestubbe/FastMessaging.svg)](https://jitpack.io/#andrestubbe/FastMessaging)
+[![Platform](https://img.shields.io/badge/Platform-Windows%2010+-lightgrey.svg)]()
 [![Java](https://img.shields.io/badge/Java-17%2B-blue.svg)](https://openjdk.org)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
@@ -22,6 +23,23 @@ FastMessaging is a high-performance messaging layer designed for autonomous AI a
 
 ---
 
+
+---
+
+## 📑 Table of Contents
+- [Why ](#why-fastmessaging)
+- [Key Features](#key-features)
+- [Architecture](#architecture)
+- [Performance](#performance)
+- [Real-World Examples](#real-world-examples)
+- [API Quick Reference](#api-quick-reference)
+- [Installation](#installation)
+- [Documentation](#documentation)
+- [Platform Support](#platform-support)
+- [Related Projects](#related-projects)
+- [License](#license)
+
+---
 ## 🚀 Quick Start
 
 ### Maven Dependency (via JitPack)
@@ -136,3 +154,20 @@ run-benchmark.bat
 ## 📄 License
 
 MIT License — Copyright (c) 2026 Andre Stubbe. See [LICENSE](LICENSE) for details.
+
+
+---
+
+## Related Projects
+
+Part of the **FastJava** high-performance ecosystem:
+* [FastCore](https://github.com/andrestubbe/FastCore) — Unified JNI extraction and native library loader
+* [FastANSI](https://github.com/andrestubbe/FastANSI) — Ultra-fast 24-bit TrueColor terminal styling
+* [FastAIRuntime](https://github.com/andrestubbe/FastAIRuntime) — Autonomous agent runtime and process supervisor
+* [FastFileSystem](https://github.com/andrestubbe/FastFileSystem) — Unified mmap indexing and NTFS live sync
+
+---
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
