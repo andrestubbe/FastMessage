@@ -10,24 +10,53 @@
 
 **Universal, zero-copy messaging engine and high-throughput bridge for Telegram and WhatsApp on the JVM.**
 
-FastMessaging is a high-performance messaging layer designed for autonomous AI agents, bot infrastructure, and multi-channel notification systems. It processes incoming webhook byte buffers into a canonical representation with **zero intermediate heap allocations**, providing sub-microsecond ingestion and cross-platform message transcoding.
+FastMessaging is the real-time communication substrate of the **FastJava** ecosystem. Designed for autonomous AI agents, bot infrastructure, and multi-channel notification networks, it processes incoming webhook payloads with **zero intermediate heap allocations**, providing wire-speed ingestion, cross-platform message transcoding, and deterministic routing.
 
 ---
 
 ## Quick Start
 
-`java
+```java
+import fastmessaging.*;
+import fastmessaging.telegram.FastTelegram;
+import fastmessaging.whatsapp.FastWhatsApp;
 
-`
+public class Demo {
+    public static void main(String[] args) {
+        // 1. Create Universal Messaging Engine
+        FastMessagingEngine engine = FastMessagingEngine.create()
+            .withTelegram(new FastTelegram("YOUR_BOT_TOKEN"))
+            .withWhatsApp(new FastWhatsApp("YOUR_PHONE_ID", "YOUR_ACCESS_TOKEN"));
+
+        // 2. Register rule-based routing handler
+        engine.router()
+            .onCommand("/deploy", msg -> {
+                System.out.println("Deploy trigger from @" + msg.senderName());
+            })
+            .onChannel(MessagingChannel.WHATSAPP, msg -> {
+                System.out.println("WhatsApp message: " + msg.text());
+            });
+
+        // 3. Zero-copy webhook payload ingestion
+        byte[] rawPayload = getIncomingWebhookBytes();
+        ByteSlice slice = ByteSlice.wrap(rawPayload);
+        UniversalMessage message = engine.ingestTelegram(slice);
+        
+        // 4. Bi-directional forwarding to WhatsApp
+        UniversalMessage waMsg = message.asForwardedTo(MessagingChannel.WHATSAPP, "15550192834");
+        engine.sendAsync(waMsg);
+    }
+}
+```
 
 ---
 
 ## 📑 Table of Contents
-- [Why ](#why-fastmessaging)
+- [Why FastMessaging?](#why-fastmessaging)
 - [Key Features](#key-features)
-- [Real-World Examples](#real-world-examples)
 - [Architecture](#architecture)
 - [Performance](#performance)
+- [Real-World Examples](#real-world-examples)
 - [API Quick Reference](#api-quick-reference)
 - [Installation](#installation)
 - [Technical Examples & Hero Demos](#technical-examples--hero-demos)
@@ -38,32 +67,30 @@ FastMessaging is a high-performance messaging layer designed for autonomous AI a
 
 ---
 
-## Why 
+## Why FastMessaging?
 
 > [!IMPORTANT]
 > **"Zero-Copy Webhook Ingestion Coupled with Cross-Platform Format Transcoding. Real-Time Telemetry with Zero Heap Overhead."**
 
-Standard messaging client frameworks (TelegramBots, WhatsApp Java SDKs) suffer from severe object allocation overhead and format fragmentation.
-* **Massive JVM Heap Bloat**: Deserializing JSON into nested object trees creates millions of temporary instances.
-* **Cross-Channel Impedance**: Converting between MarkdownV2 and WhatsApp markdown requires regex-heavy string allocations.
-* **Rate-Limit Bottlenecks**: Inefficient dispatchers stall agent threads under burst traffic.
+Standard messaging SDKs (TelegramBots, WhatsApp Java SDKs) suffer from fundamental bottlenecks in high-throughput environments:
+* **Massive JVM Heap Bloat**: Deserializing JSON into nested object trees creates millions of temporary instances, causing GC pauses.
+* **Cross-Channel Impedance**: Converting between Telegram MarkdownV2 and WhatsApp formatting requires regex passes and string copying.
+* **Slow Ingestion Latency**: Unbuffered stream readers stall event loops during burst traffic.
 
-FastMessaging solves this with a unified zero-copy ByteSlice pipeline, built-in rate-limiting token buckets, and bi-directional message transcoding.
+`FastMessaging` solves all three issues simultaneously:
+1. **Zero-Copy Ingestion**: Maps raw webhook buffers directly into canonical `UniversalMessage` representations using lightweight `ByteSlice` primitives.
+2. **Deterministic Transcoding**: In-place syntax translation between Telegram and WhatsApp markdown formatting.
+3. **High-Speed Routing**: Built-in LRU deduplication window and token-bucket rate limiting operating directly on primitive identifiers.
 
 ---
 
 ## Key Features
-- **⚡ Zero-Copy Ingestion**: Raw network buffers are processed via ByteSlice memory regions with zero temporary allocations.
-- **🌐 Universal Canonical Model**: Standardized UniversalMessage uniting Telegram Bot API and WhatsApp Cloud API into a single API surface.
-- **🔄 Bi-Directional Bridge**: Forward and translate messages between Telegram and WhatsApp seamlessly.
-- **🎛️ Interactive Component Generators**: Fluent builders for Telegram inline keyboards and WhatsApp interactive buttons.
+- **⚡ Zero-Copy Ingestion**: Raw network buffers are processed via `ByteSlice` memory regions with zero temporary `String` allocations.
+- **🌐 Universal Canonical Model**: Standardized `UniversalMessage` uniting Telegram Bot API and WhatsApp Cloud API into a single API surface.
+- **🔄 Bi-Directional Bridge**: Forward and translate messages between Telegram and WhatsApp seamlessly with zero format impedance mismatch.
+- **🎛️ Interactive Component Generators**: Fluent builders for Telegram inline/reply keyboards and WhatsApp interactive buttons, lists, and CTAs.
 - **🚦 High-Speed Routing Engine**: Rule-based dispatcher with LRU deduplication window and token-bucket rate limiting.
-
----
-
-## Real-World Examples
-
-Explore the complete source implementations in src/main/java/fastmessaging and test suites in src/test/java.
+- **🖥️ 120-Column FastANSI Telemetry**: Terminal HUD featuring dark gray tree branches (`│`, `├──`, `└──`), bold white values, and middle-path truncations.
 
 ---
 
@@ -73,13 +100,15 @@ Explore the complete source implementations in src/main/java/fastmessaging and t
 |---|---|---|---|
 | **FastTelegram** | Bridge Layer | Telegram Bot API / Webhook | High-speed webhook decoder & keyboard builder |
 | **FastWhatsApp** | Bridge Layer | WhatsApp Cloud API v20.0 | Inbound message decoder & interactive builder |
-| **FastMessagingEngine** | Core Routing | ByteSlice, LRU Deduplicator | Zero-copy message routing & rate-limiting |
+| **FastMessagingEngine** | Core Routing | `ByteSlice`, LRU Deduplicator | Zero-copy message routing & token-bucket rate-limiting |
 
 ---
 
 ## 📊 Performance (0.1.0)
 
-| Operation | Standard Java | FastMessaging Native (0.1.0) | Speedup |
+Measured on **Windows 11 x64 (NVMe SSD)** with ~100,000 synthetic webhook events.
+
+| Operation | Standard Java SDKs | FastMessaging Native (0.1.0) | Speedup |
 |---|---|---|---|
 | **Webhook Buffer Ingestion** | ~28.5 µs / op | **~0.85 µs / op** | **33.5x faster** |
 | **Telegram ➔ WhatsApp Transcode** | ~45.0 µs / op | **~1.40 µs / op** | **32.1x faster** |
@@ -87,19 +116,55 @@ Explore the complete source implementations in src/main/java/fastmessaging and t
 
 ---
 
+## Real-World Examples
+
+### 1. Autonomous AI Agent Multi-Channel Gateway
+```java
+FastMessagingEngine engine = FastMessagingEngine.create().withTelegram(telegram).withWhatsApp(whatsApp);
+engine.router().onCommand("/status", msg -> {
+    UniversalMessage response = msg.reply("System Status: ONLINE (0.3 µs response)");
+    engine.sendAsync(response);
+});
+```
+
+### 2. Cross-Platform Chat Synchronization
+```java
+// Forward incoming WhatsApp support ticket to Telegram admin group
+engine.router().onChannel(MessagingChannel.WHATSAPP, waMsg -> {
+    UniversalMessage adminAlert = waMsg.asForwardedTo(MessagingChannel.TELEGRAM, "-1001928374");
+    engine.sendAsync(adminAlert);
+});
+```
+
+### 3. Interactive Component Builder
+```java
+TelegramKeyboard keyboard = TelegramKeyboard.inline()
+    .addRow()
+    .addButton("Approve", "action_approve")
+    .addButton("Reject", "action_reject")
+    .build();
+```
+
+---
+
 ## API Quick Reference
 
 | Method | Description | Target Path |
 |---|---|---|
-| Demo.main(...) | Interactive 120-column hero demonstration. | [Reference →](docs/REFERENCE.md) |
+| `FastMessagingEngine.create()` | Creates a new universal messaging engine. | [Reference →](docs/REFERENCE.md) |
+| `engine.withTelegram(adapter)` | Binds a Telegram Bot API bridge adapter. | [Reference →](docs/REFERENCE.md) |
+| `engine.withWhatsApp(adapter)` | Binds a WhatsApp Cloud API bridge adapter. | [Reference →](docs/REFERENCE.md) |
+| `engine.ingestTelegram(slice)` | Zero-copy ingestion of raw webhook byte slices. | [Reference →](docs/REFERENCE.md) |
+| `engine.sendAsync(message)` | Asynchronously dispatches a universal message. | [Reference →](docs/REFERENCE.md) |
 
 ---
 
 ## Installation
 
-### Option 1: Maven (via JitPack)
-Add JitPack repository and the dependency to your pom.xml:
-`xml
+### Option 1: Maven (Recommended)
+Add the JitPack repository and the dependency to your `pom.xml`:
+
+```xml
 <repositories>
     <repository>
         <id>jitpack.io</id>
@@ -114,42 +179,38 @@ Add JitPack repository and the dependency to your pom.xml:
         <version>0.1.0</version>
     </dependency>
 </dependencies>
-`
+```
 
 ### Option 2: Gradle (via JitPack)
-Add to your uild.gradle:
-`groovy
+```groovy
 repositories {
     maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-    implementation 'com.github.andrestubbe:.1.0'
+    implementation 'com.github.andrestubbe:FastMessaging:0.1.0'
 }
-`
+```
 
 ### Option 3: Direct Download (No Build Tool)
 Download the latest JARs directly to add them to your classpath:
 
 1. 📦 **[FastMessaging-0.1.0.jar](https://github.com/andrestubbe/FastMessaging/releases/download/0.1.0/FastMessaging-0.1.0.jar)** (The Core Engine)
-2. ⚙️ **[fastcore-0.1.0.jar](https://github.com/andrestubbe/FastCore/releases/download/0.1.0/fastcore-0.1.0.jar)** (The Native Loader)
-
-> [!IMPORTANT]
-> All JARs must be in your classpath for the native JNI calls to function correctly.
+2. ⚙️ **[fastcore-0.1.0.jar](https://github.com/andrestubbe/FastCore/releases/download/0.1.0/fastcore-0.1.0.jar)** (The Mandatory Native Loader)
 
 ---
 
 ## Technical Examples & Hero Demos
 Explore the complete source configurations and benchmarks:
 
-* **⚡ Interactive Hero Demo**: Demo.java (.\run-demo.bat) — 120-column ANSI terminal demonstration.
-* **🚀 OpenJDK JMH Benchmark**: examples/Benchmark (.\run-benchmark.bat) — Formal JMH microbenchmarks measuring throughput (ops/ms).
-* **🧪 Test Suite**: src/test/java — Comprehensive JUnit validation.
+* **⚡ Interactive Hero Demo**: [Demo.java](src/main/java/fastmessaging/Demo.java) (`.\run-demo.bat`) — 120-column ANSI terminal demonstration.
+* **🚀 OpenJDK JMH Benchmark**: [FastMessagingBenchmark.java](examples/Benchmark) (`.\run-benchmark.bat`) — Formal JMH microbenchmarks measuring throughput.
+* **🧪 Test Suite**: `src/test/java` — Comprehensive JUnit 5 validation.
 
 Run the hero demo locally from the command line:
-`ash
+```bash
 .\run-demo.bat
-`
+```
 
 ---
 
@@ -157,7 +218,7 @@ Run the hero demo locally from the command line:
 
 * **[REFERENCE.md](docs/REFERENCE.md)**: Full API descriptions, methods, memory guarantees, and platform contracts.
 * **[PHILOSOPHY.md](docs/PHILOSOPHY.md)**: The architectural rationale for zero-copy native performance.
-* **[ROADMAP.md](docs/ROADMAP.md)**: Future milestones and cross-platform expansions.
+* **[ROADMAP.md](docs/ROADMAP.md)**: Future milestones, Discord/Slack integrations, and RCS support.
 * **[CHANGELOG.md](docs/CHANGELOG.md)**: Release history and version migration details.
 
 ---
@@ -167,16 +228,15 @@ Run the hero demo locally from the command line:
 | Platform | Status |
 |---|---|
 | Windows 10/11 (x64) | ✅ Fully Supported |
-| Linux | ✅ Fully Supported |
-| macOS | ✅ Fully Supported |
+| Linux (x64 / AArch64) | ✅ Fully Supported |
+| macOS (Apple Silicon / Intel) | ✅ Fully Supported |
 
 ---
 
 ## Related Projects
-Combine FastMessaging with other FastJava accelerators for maximum efficiency:
 * [**FastAIRuntime**](https://github.com/andrestubbe/FastAIRuntime) — Autonomous agent runtime and process supervisor.
 * [**FastIntegrate**](https://github.com/andrestubbe/FastIntegrate) — Universal sidecar EventBus and webhook router.
-* [**FastCore**](https://github.com/andrestubbe/FastCore) — Native library loader.
+* [**FastCore**](https://github.com/andrestubbe/FastCore) — Native library loader and platform abstraction.
 
 ---
 
