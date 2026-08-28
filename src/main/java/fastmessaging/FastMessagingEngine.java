@@ -178,9 +178,10 @@ public final class FastMessagingEngine implements AutoCloseable {
                 return this.whatsAppAdapter.sendAsync(message);
             } else if (this.customEgressAdapters.containsKey(channel)) {
                 final Consumer<UniversalMessage> customSender = this.customEgressAdapters.get(channel);
+                final UniversalMessage outboundMsg = message;
                 return CompletableFuture.supplyAsync(() -> {
-                    customSender.accept(message);
-                    return message.withStatus(MessageStatus.SENT);
+                    customSender.accept(outboundMsg);
+                    return outboundMsg.withStatus(MessageStatus.SENT);
                 });
             } else {
                 return CompletableFuture.completedFuture(message.withStatus(MessageStatus.SENT));
