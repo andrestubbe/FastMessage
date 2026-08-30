@@ -104,34 +104,36 @@ public final class Demo {
         inputThread.start();
 
         long offset = 0;
-        // Purge old updates on startup
-        try {
-            String initial = telegram.getUpdatesAsync(0, 1).get();
-            offset = parseMaxUpdateId(initial) + 1;
-        } catch (Exception ignored) {}
-
         while (running.get()) {
             try {
-                String updatesJson = telegram.getUpdatesAsync(offset, 2).get();
+                String updatesJson = telegram.getUpdatesAsync(offset, 1).get();
                 if (updatesJson != null && updatesJson.contains("\"update_id\"")) {
-                    Pattern updatePattern = Pattern.compile("\\{\"update_id\":(\\d+),\"message\":\\{.*?\"message_id\":(\\d+).*?\"chat\":\\{\"id\":(-?\\d+).*?\"from\":\\{.*?\"first_name\":\"(.*?)\"(?:,\"username\":\"(.*?)\")?.*?\"text\":\"(.*?)\"");
-                    Matcher m = updatePattern.matcher(updatesJson);
+                    Matcher m = Pattern.compile("\\{\"update_id\":(\\d+).*?\"message\":\\{.*?\"message_id\":(\\d+).*?\"chat\":\\{\"id\":(-?\\d+).*?\"text\":\"(.*?)\"").matcher(updatesJson);
 
                     while (m.find()) {
                         long updateId = Long.parseLong(m.group(1));
                         offset = Math.max(offset, updateId + 1);
 
                         long chatId = Long.parseLong(m.group(3));
-                        String firstName = m.group(4);
-                        String username = m.group(5) != null ? m.group(5) : firstName;
-                        String text = unescapeJson(m.group(6));
+                        String rawText = m.group(4);
+                        String text = unescapeJson(rawText);
+
+                        // Find username/first_name optionally
+                        String username = "user";
+                        Matcher uM = Pattern.compile("\"username\":\"(.*?)\"").matcher(updatesJson);
+                        if (uM.find()) {
+                            username = uM.group(1);
+                        } else {
+                            Matcher fM = Pattern.compile("\"first_name\":\"(.*?)\"").matcher(updatesJson);
+                            if (fM.find()) username = fM.group(1);
+                        }
 
                         // Log User Message in clean gray/white
                         long t0 = System.currentTimeMillis();
                         System.out.println(FastANSI.FG_BRIGHT_BLACK + "  👤 [TELEGRAM @" + username + "]: " + FastANSI.FG_BRIGHT_WHITE + text + FastANSI.RESET);
 
                         // Generate AI Response
-                        String aiReply = "Hello " + firstName + "! I am your FastJava AI Bot.";
+                        String aiReply = "Hello! I am your FastJava AI Bot.";
                         if (finalAi != null) {
                             try {
                                 StringBuilder sb = new StringBuilder();
@@ -158,7 +160,7 @@ public final class Demo {
                         telegram.sendAsync(replyMsg);
                     }
                 }
-                Thread.sleep(200);
+                Thread.sleep(100);
             } catch (Exception e) {
                 try { Thread.sleep(1000); } catch (InterruptedException ignored) {}
             }
