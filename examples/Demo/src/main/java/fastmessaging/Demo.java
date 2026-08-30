@@ -31,7 +31,9 @@ public final class Demo {
     private static final String DEFAULT_MODEL = "smollm2:1.7b";
     private static final String SYSTEM_PROMPT = "Du bist ein präziser, extrem hilfreicher KI-Assistent. Antworte auf Deutsch.";
 
-    private static final int TELEGRAM_STREAM_INTERVAL_MS = 60; // ultra-fast typing stream test
+    private static final int TELEGRAM_STREAM_INTERVAL_MS = 200; // optimal balance: fluid typing without network stutter
+
+    private static final java.util.concurrent.ExecutorService TELEGRAM_ASYNC_EXECUTOR = java.util.concurrent.Executors.newSingleThreadExecutor();
 
     private static final int MARGIN = 8;
     private static final int MAX_COLS = 80;
@@ -221,13 +223,16 @@ public final class Demo {
                             }
                             System.out.flush();
 
-                            // Real-time Telegram Live Stream (seamless in-place update without block)
+                            // Real-time Telegram Live Stream (fully decoupled in background thread to prevent console stutter)
                             long cId = activeChatId.get();
                             long mId = activeTelegramMsgId.get();
                             long now = System.currentTimeMillis();
                             if (cId != 0 && mId != 0 && now - lastTelegramEditMs.get() > TELEGRAM_STREAM_INTERVAL_MS) {
                                 lastTelegramEditMs.set(now);
-                                telegram.editMessageTextAsync(String.valueOf(cId), mId, currentStreamBuffer.toString());
+                                String snapshot = currentStreamBuffer.toString();
+                                TELEGRAM_ASYNC_EXECUTOR.submit(() -> {
+                                    telegram.editMessageTextAsync(String.valueOf(cId), mId, snapshot);
+                                });
                             }
                         });
 
