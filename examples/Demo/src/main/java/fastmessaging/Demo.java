@@ -44,10 +44,7 @@ public final class Demo {
         FastMessagingAnsi.printSection("1. INITIALIZING MESSAGING ENGINE & ADAPTERS");
         final FastMessagingEngine engine = FastMessagingEngine.create();
         final FastTelegram telegram = new FastTelegram(DEFAULT_TOKEN);
-        final FastWhatsApp whatsApp = new FastWhatsApp("109988776655443", "EAAXmockTokenWhatsAppCloudApiV20");
-
         engine.withTelegram(telegram);
-        engine.withWhatsApp(whatsApp);
 
         // 2. Initializing AI Model
         AI aiClient = null;
@@ -59,7 +56,6 @@ public final class Demo {
         }
 
         FastMessagingAnsi.printTreeItem("Telegram Adapter", "FastTelegram [t.me/FastJava_AIBot | Token: " + DEFAULT_TOKEN.substring(0, 10) + "...]", false);
-        FastMessagingAnsi.printTreeItem("WhatsApp Adapter", "FastWhatsApp [Graph API v20.0 | Zero-Alloc JSON Serializer]", false);
         FastMessagingAnsi.printTreeItem("Payload Engine", "ByteSlice Direct UTF-8 Buffer Slicing (0 String allocs)", false);
         FastMessagingAnsi.printTreeItem("Routing Pipeline", "Rule-based Predicate Filter + FastAI Model Bridge", false);
         FastMessagingAnsi.printTreeItem("Local AI Backend", aiStatus, true);
@@ -73,7 +69,7 @@ public final class Demo {
         final long benchStart = System.nanoTime();
         for (int i = 0; i < iterations; i++) {
             final UniversalMessage u1 = telegram.toUniversal(tgSlice);
-            final String s1 = whatsApp.fromUniversalMessage(u1);
+            final String s1 = telegram.fromUniversalMessage(u1);
         }
         final long benchElapsed = System.nanoTime() - benchStart;
         final double totalSeconds = benchElapsed / 1_000_000_000.0;
@@ -82,7 +78,7 @@ public final class Demo {
         final double avgNsPerOp = (double) benchElapsed / totalOps;
 
         FastMessagingAnsi.printBenchmarkRow("Telegram Ingest + Decode", "Zero-Copy", opsPerSec * 11 / 10, avgNsPerOp * 0.9);
-        FastMessagingAnsi.printBenchmarkRow("Cross-Platform Serialization", "Zero-Alloc", opsPerSec, avgNsPerOp);
+        FastMessagingAnsi.printBenchmarkRow("Telegram Fast Serialization", "Zero-Alloc", opsPerSec, avgNsPerOp);
 
         // 4. Live Telegram AI Listener
         FastMessagingAnsi.printSection("3. LIVE TELEGRAM AI CONVERSATION PROTOCOL");
