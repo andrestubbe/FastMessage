@@ -49,19 +49,20 @@ public final class Demo {
         engine.withTelegram(telegram);
         engine.withWhatsApp(whatsApp);
 
+        // 2. Initializing AI Model
+        AI aiClient = null;
+        String aiStatus = "FastAI connected (" + DEFAULT_MODEL + ")";
+        try {
+            aiClient = FastAI.connect(DEFAULT_MODEL);
+        } catch (Throwable t) {
+            aiStatus = "Fallback heuristic mode (" + t.getMessage() + ")";
+        }
+
         FastMessagingAnsi.printTreeItem("Telegram Adapter", "FastTelegram [t.me/FastJava_AIBot | Token: " + DEFAULT_TOKEN.substring(0, 10) + "...]", false);
         FastMessagingAnsi.printTreeItem("WhatsApp Adapter", "FastWhatsApp [Graph API v20.0 | Zero-Alloc JSON Serializer]", false);
         FastMessagingAnsi.printTreeItem("Payload Engine", "ByteSlice Direct UTF-8 Buffer Slicing (0 String allocs)", false);
-        FastMessagingAnsi.printTreeItem("Routing Pipeline", "Rule-based Predicate Filter + FastAI Model Bridge", true);
-
-        // 2. Initializing AI Model
-        AI aiClient = null;
-        try {
-            aiClient = FastAI.connect(DEFAULT_MODEL);
-            FastMessagingAnsi.printTreeItem("Local AI Backend", "FastAI connected (" + DEFAULT_MODEL + ")", true);
-        } catch (Throwable t) {
-            FastMessagingAnsi.printTreeItem("Local AI Backend", "Fallback heuristic mode (" + t.getMessage() + ")", true);
-        }
+        FastMessagingAnsi.printTreeItem("Routing Pipeline", "Rule-based Predicate Filter + FastAI Model Bridge", false);
+        FastMessagingAnsi.printTreeItem("Local AI Backend", aiStatus, true);
 
         // 3. Zero-Copy Ingestion Bench
         FastMessagingAnsi.printSection("2. ZERO-COPY PIPELINE BENCHMARK (100,000 WARM ITERATIONS)");

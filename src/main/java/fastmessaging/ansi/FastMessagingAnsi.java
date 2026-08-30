@@ -44,7 +44,7 @@ public final class FastMessagingAnsi {
         final String border = GRAY + "═".repeat(TERMINAL_WIDTH) + RESET;
         System.out.println(border);
         final String centeredTitle = center(title, TERMINAL_WIDTH);
-        System.out.println(BOLD_CYAN + centeredTitle + RESET);
+        System.out.println(BOLD_WHITE + centeredTitle + RESET);
         if (subtitle != null && !subtitle.isEmpty()) {
             final String centeredSub = center(subtitle, TERMINAL_WIDTH);
             System.out.println(GRAY + centeredSub + RESET);
@@ -57,7 +57,7 @@ public final class FastMessagingAnsi {
         final int sideLen = Math.max(0, (TERMINAL_WIDTH - text.length()) / 2);
         final String left = GRAY + "─".repeat(sideLen) + RESET;
         final String right = GRAY + "─".repeat(TERMINAL_WIDTH - sideLen - text.length()) + RESET;
-        System.out.println("\n" + left + BOLD_YELLOW + text + RESET + right);
+        System.out.println("\n" + left + BOLD_WHITE + text + RESET + right);
     }
 
     public static void printTreeItem(final String label, final String value, final boolean isLast) {
