@@ -1,0 +1,65 @@
+================================================================================
+YOUTUBE VIDEO RELEASE
+================================================================================
+
+TITLE:
+FastMessaging and FastAIBot: Live Telegram AI Bot & Zero-Copy Ingress Engine (Zero Allocation FastJava)
+
+DESCRIPTION:
+What happens when you connect Telegram webhooks and local LLM inference directly to a zero-copy JVM pipeline?
+
+In this showcase, FastMessaging acts as the high-throughput bridge between Telegram and local AI inference (FastAIBot / Ollama smollm2:1.7b). Incoming messages are decoded with zero intermediate heap allocations via ByteSlice, processed at wire speed, and streamed back token-by-token in real time into both the console HUD and the live Telegram chat.
+
+FastMessaging eliminates framework bloat, delivers sub-millisecond serialization, and transforms Java into a lightning-fast substrate for conversational AI agents.
+
+TECHNICAL HIGHLIGHTS:
+* Zero-Copy Webhook & Polling Ingress: ByteSlice buffer slicing parsing raw UTF-8 payloads with zero String allocations.
+* Real-Time Bidirectional Token Streaming: Live token streaming with seamless in-place chat editing via editMessageText.
+* FastAIBot Conversation Memory: Stateful multi-turn dialogue management with 80-column ANSI formatted console HUD.
+* HTTP/2 Native Pipeline: JDK 17 asynchronous HTTP/2 client eliminating heavy third-party bot frameworks.
+* 100,000 Ops Benchmark: Sub-microsecond serialization throughput (>800,000 ops/s) on standard hardware.
+* Zero Allocation Hotpath: Allocation-free routing and payload dispatch without GC pauses.
+
+GITHUB REPOSITORIES:
+* FastMessaging: https://github.com/andrestubbe/FastMessaging
+* FastAIBot: https://github.com/andrestubbe/FastAIBot
+* FastAI: https://github.com/andrestubbe/FastAI
+* FastString: https://github.com/andrestubbe/FastString
+* FastCore: https://github.com/andrestubbe/FastCore
+
+OUR PHILOSOPHY:
+Zero allocations. Zero framework bloat. Wire-speed messaging. Native performance. Making the JVM faster.
+
+TAGS:
+Java, FastJava, FastMessaging, FastAIBot, TelegramBot, AI, Ollama, LLM, ZeroCopy, ZeroGC, Performance, JNI, Streaming, FastAI, ChatBot
+
+
+================================================================================
+LINKEDIN POST (ANDRE STUBBE STYLE)
+================================================================================
+
+Ich wollte eigentlich nur wissen, warum herkoemmliche Java-Chatbots so viel RAM fressen und jede HTTP-Nachricht fuenfmal in neue String-Objekte kopieren muessen.
+
+Also habe ich FastMessaging gebaut.
+
+Zusammen mit FastAIBot und einem lokalen LLM (Ollama smollm2:1.7b) laeuft der Telegram-Bot jetzt komplett Zero-Copy:
+
+Eingehende Webhook- und Polling-Bytes werden direkt auf ByteSlice-Ebene verarbeitet (0 Heap-Allokationen), die Antwort wird Token fuer Token generiert und gleichzeitig in der Konsole sowie live im Telegram-Chat getippt.
+
+Kein Spring-Overhead, keine schweren Bot-Frameworks, keine GC-Pauses.
+
+Was unter der Haube abgeht:
+* Zero-Copy Webhook Ingress mit ByteSlice UTF-8 Direct Buffer Slicing
+* Echtes Bidirektionales Token-Streaming direkt in die Telegram Message Bubble
+* 80-Column ANSI Console HUD mit FastAIBot Multi-Turn Memory
+* >800.000 ops/s Durchsatz beim Cross-Platform Payload Serialization Benchmark
+* Native HTTP/2 Pipeline ueber Standard Java 17
+
+Java muss fuer AI-Agenten und Bots nicht schwerfaellig sein. Man muss nur aufhoeren, es wie Standard-Java zu benutzen.
+
+Hier geht es zum Open-Source-Code:
+GitHub: https://github.com/andrestubbe/FastMessaging
+FastAIBot: https://github.com/andrestubbe/FastAIBot
+Full ecosystem: https://github.com/andrestubbe
+
+#FastJava #FastMessaging #FastAIBot #TelegramBot #AI #LLM #ZeroCopy #JavaPerformance #Ollama

@@ -176,7 +176,7 @@ public final class Demo {
                         UniversalMessage initialMsg = UniversalMessage.builder()
                             .channel(MessagingChannel.TELEGRAM)
                             .chatId(String.valueOf(chatId))
-                            .text("thinking... ▌")
+                            .text("thinking...")
                             .build();
 
                         try {
@@ -211,13 +211,13 @@ public final class Demo {
                             }
                             System.out.flush();
 
-                            // Real-time Telegram Live Stream
+                            // Real-time Telegram Live Stream (seamless in-place update without block)
                             long cId = activeChatId.get();
                             long mId = activeTelegramMsgId.get();
                             long now = System.currentTimeMillis();
                             if (cId != 0 && mId != 0 && now - lastTelegramEditMs.get() > TELEGRAM_STREAM_INTERVAL_MS) {
                                 lastTelegramEditMs.set(now);
-                                telegram.editMessageTextAsync(String.valueOf(cId), mId, currentStreamBuffer.toString() + " ▌");
+                                telegram.editMessageTextAsync(String.valueOf(cId), mId, currentStreamBuffer.toString());
                             }
                         });
 
@@ -227,7 +227,7 @@ public final class Demo {
                         String fullReply = currentStreamBuffer.toString().trim();
                         HISTORY.add(new ChatMessage("assistant", fullReply));
 
-                        // 4. Final Telegram Message Edit (remove cursor)
+                        // 4. Final Telegram Message Edit (ensures full reply is synced)
                         long tgMsgId = activeTelegramMsgId.get();
                         if (tgMsgId != 0 && !fullReply.isEmpty()) {
                             telegram.editMessageTextAsync(String.valueOf(chatId), tgMsgId, fullReply);
