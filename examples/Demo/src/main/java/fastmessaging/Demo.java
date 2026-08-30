@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 public final class Demo {
 
     private static final String DEFAULT_TOKEN = resolveToken();
-    private static final String DEFAULT_MODEL = "ollama:qwen3.5:0.8b";
+    private static final String DEFAULT_MODEL = "ollama:smollm2:1.7b";
     private static final String SYSTEM_PROMPT = "Du bist ein präziser, extrem hilfreicher KI-Assistent.";
 
     private static final int MARGIN = 8;
