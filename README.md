@@ -21,9 +21,9 @@ FastMessage is the real-time communication substrate of the **FastJava** ecosyst
 ## Quick Start
 
 ```java
-import FastMessage.*;
-import FastMessage.telegram.FastTelegram;
-import FastMessage.whatsapp.FastWhatsApp;
+import fastmessage.*;
+import fastmessage.telegram.FastTelegram;
+import fastmessage.whatsapp.FastWhatsApp;
 
 public class Demo {
     public static void main(String[] args) {
@@ -207,8 +207,8 @@ Download the latest JARs directly to add them to your classpath:
 ## Technical Examples & Hero Demos
 Explore the complete source configurations and benchmarks:
 
-* **⚡ Interactive Hero Demo**: [Demo.java](src/main/java/FastMessage/Demo.java) (`.\run-demo.bat`) — 120-column ANSI terminal demonstration.
-* **🚀 OpenJDK JMH Benchmark**: [FastMessageBenchmark.java](examples/Benchmark) (`.\run-benchmark.bat`) — Formal JMH microbenchmarks measuring throughput.
+* **⚡ Interactive Hero Demo**: [Demo.java](examples/Demo/src/main/java/fastmessage/Demo.java) (`.\run-demo.bat`) — 120-column ANSI terminal demonstration.
+* **🚀 OpenJDK JMH Benchmark**: [MessagingBenchmark.java](examples/Benchmark/src/main/java/fastmessage/benchmark/MessagingBenchmark.java) (`.\run-benchmark.bat`) — Formal JMH microbenchmarks measuring throughput.
 * **🧪 Test Suite**: `src/test/java` — Comprehensive JUnit 5 validation.
 
 Run the hero demo locally from the command line:
