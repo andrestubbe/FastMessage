@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 public final class Demo {
 
     private static final String DEFAULT_TOKEN = resolveToken();
-    private static final String DEFAULT_MODEL = "ollama:qwen2.5:0.5b";
+    private static final String DEFAULT_MODEL = "ollama:qwen3.5:0.8b";
 
     private static String resolveToken() {
         String envToken = System.getenv("TELEGRAM_BOT_TOKEN");
