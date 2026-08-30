@@ -124,21 +124,21 @@ Measured on **Windows 11 x64 (AMD Ryzen / NVMe SSD)** with 100,000 synthetic web
 ## 🛠️ Adapter Configuration & Prerequisites
 
 ### 1. Telegram Bot Setup
-1. Chatte mit [@BotFather](https://t.me/BotFather) auf Telegram und erstelle einen neuen Bot mit `/newbot`.
-2. Kopiere den bereitgestellten API-Token (z. B. `1234567890:ABCdefGHIjklMNOpqrSTUvwxYZ`).
-3. Setze die Umgebungsvariable `TELEGRAM_BOT_TOKEN`:
+1. Chat with [@BotFather](https://t.me/BotFather) on Telegram and create a new bot using `/newbot`.
+2. Copy the generated API token (e.g. `1234567890:ABCdefGHIjklMNOpqrSTUvwxYZ`).
+3. Set the `TELEGRAM_BOT_TOKEN` environment variable:
    ```powershell
-   [System.Environment]::SetEnvironmentVariable("TELEGRAM_BOT_TOKEN", "DEIN_TOKEN", "User")
+   [System.Environment]::SetEnvironmentVariable("TELEGRAM_BOT_TOKEN", "YOUR_BOT_TOKEN", "User")
    ```
-4. Initialisiere den Adapter im Code:
+4. Initialize the adapter in code:
    ```java
    FastTelegram telegram = new FastTelegram(System.getenv("TELEGRAM_BOT_TOKEN"));
    ```
 
 ### 2. WhatsApp Cloud API Setup
-1. Erstelle eine Meta Developer App unter [developers.facebook.com](https://developers.facebook.com/) mit dem Produkt **WhatsApp**.
-2. Notiere dir deine **Phone Number ID** und generiere ein **System User Access Token** mit den Berechtigungen `whatsapp_business_messaging`.
-3. Initialisiere den Adapter:
+1. Create a Meta Developer App at [developers.facebook.com](https://developers.facebook.com/) with the **WhatsApp** product enabled.
+2. Note your **Phone Number ID** and generate a **System User Access Token** with `whatsapp_business_messaging` permissions.
+3. Initialize the adapter:
    ```java
    FastWhatsApp whatsApp = new FastWhatsApp("PHONE_NUMBER_ID", "PERMANENT_ACCESS_TOKEN");
    ```
