@@ -28,8 +28,6 @@
             <groupId>com.github.andrestubbe</groupId>
             <artifactId>FastMessaging</artifactId>
             <version>0.1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../../target/FastMessaging-0.1.0.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.github.andrestubbe</groupId>
