@@ -12,6 +12,10 @@
 
 FastMessage is the real-time communication substrate of the **FastJava** ecosystem. Designed for autonomous AI agents, bot infrastructure, and multi-channel notification networks, it processes incoming webhook payloads with **zero intermediate heap allocations**, providing wire-speed ingestion, cross-platform message transcoding, and deterministic routing.
 
+[**Watch Telegram AI Bot Demo (YouTube)**](https://youtu.be/c467s4fES38)
+
+[![FastMessage Showcase](docs/screenshot.png)](https://youtu.be/c467s4fES38)
+
 ---
 
 ## Quick Start
