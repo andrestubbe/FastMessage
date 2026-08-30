@@ -2,29 +2,29 @@ package fastmessaging;
 
 import fastai.AI;
 import fastai.FastAI;
+import fastaibot.FastAIBot;
+import fastaimemory.ChatMLFormatter;
 import fastansi.FastANSI;
 import fastmessaging.ansi.FastMessagingAnsi;
 import fastmessaging.telegram.FastTelegram;
-import fastmessaging.telegram.TelegramUpdate;
-import fastmessaging.whatsapp.FastWhatsApp;
-import fastmessaging.whatsapp.WhatsAppInteractive;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * FastMessaging Live Telegram AI Bot & Zero-Copy Engine Demo
- * Styled strictly in gray/white FastJava aesthetic with live conversation protocol.
+ * Re-uses official FastAIBot engine and conversation history with gray/white FastJava styling.
  */
 public final class Demo {
 
     private static final String DEFAULT_TOKEN = resolveToken();
     private static final String DEFAULT_MODEL = "ollama:qwen3.5:0.8b";
+    private static final String SYSTEM_PROMPT = "Du bist ein präziser, freundlicher KI-Assistent. Antworte auf Deutsch, extrem hilfreich und prägnant.";
 
     private static String resolveToken() {
         String envToken = System.getenv("TELEGRAM_BOT_TOKEN");
@@ -46,11 +46,25 @@ public final class Demo {
         final FastTelegram telegram = new FastTelegram(DEFAULT_TOKEN);
         engine.withTelegram(telegram);
 
-        // 2. Initializing AI Model
-        AI aiClient = null;
-        String aiStatus = "FastAI connected (" + DEFAULT_MODEL + ")";
+        // 2. Initializing AI Model & FastAIBot
+        final StringBuilder currentStreamBuffer = new StringBuilder(256);
+        final AtomicInteger tokenCounter = new AtomicInteger(0);
+
+        FastAIBot bot = null;
+        String aiStatus = "FastAIBot ready (" + DEFAULT_MODEL + ")";
         try {
-            aiClient = FastAI.connect(DEFAULT_MODEL);
+            final AI ai = FastAI.connect(DEFAULT_MODEL);
+            bot = new FastAIBot(
+                ai,
+                SYSTEM_PROMPT,
+                token -> {
+                    tokenCounter.incrementAndGet();
+                    currentStreamBuffer.append(token);
+                    System.out.print(FastANSI.FG_BRIGHT_WHITE + token + FastANSI.RESET);
+                    System.out.flush();
+                },
+                new ChatMLFormatter()
+            );
         } catch (Throwable t) {
             aiStatus = "Fallback heuristic mode (" + t.getMessage() + ")";
         }
@@ -86,7 +100,7 @@ public final class Demo {
         System.out.println(FastANSI.FG_BRIGHT_BLACK + "  ├── Bot Link       : " + FastANSI.FG_BRIGHT_WHITE + "https://t.me/FastJava_AIBot" + FastANSI.RESET);
         System.out.println(FastANSI.FG_BRIGHT_BLACK + "  └── Instructions   : " + FastANSI.FG_BRIGHT_WHITE + "Send any message in Telegram to @FastJava_AIBot (or press ENTER here to exit)\n" + FastANSI.RESET);
 
-        final AI finalAi = aiClient;
+        final FastAIBot finalBot = bot;
         final AtomicBoolean running = new AtomicBoolean(true);
 
         // Background reader for Enter key
@@ -108,7 +122,6 @@ public final class Demo {
                 while (m.find()) {
                     offset = Math.max(offset, Long.parseLong(m.group(1)) + 1);
                 }
-                // Confirm offset flush to Telegram
                 if (offset > 0) {
                     telegram.getUpdatesAsync(offset, 0).get();
                 }
@@ -119,7 +132,6 @@ public final class Demo {
             try {
                 String updatesJson = telegram.getUpdatesAsync(offset, 1).get();
                 if (updatesJson != null && updatesJson.contains("\"update_id\"")) {
-                    // Split by {"update_id":
                     String[] parts = updatesJson.split("\\{\"update_id\":");
                     for (int i = 1; i < parts.length; i++) {
                         String part = parts[i];
@@ -147,35 +159,44 @@ public final class Demo {
                         }
 
                         // Log User Message in clean gray/white
-                        long t0 = System.currentTimeMillis();
                         System.out.println(FastANSI.FG_BRIGHT_BLACK + "  👤 [TELEGRAM @" + username + "]: " + FastANSI.FG_BRIGHT_WHITE + text + FastANSI.RESET);
 
-                        // Generate AI Response
-                        String aiReply = "Hello! I am your FastJava AI Bot.";
-                        if (finalAi != null) {
+                        // Generate AI Response using official FastAIBot
+                        System.out.print(FastANSI.FG_BRIGHT_BLACK + "  🤖 [FASTAIBOT / LLAMA]: " + FastANSI.RESET);
+                        currentStreamBuffer.setLength(0);
+                        tokenCounter.set(0);
+
+                        long t0 = System.currentTimeMillis();
+                        if (finalBot != null) {
                             try {
-                                StringBuilder sb = new StringBuilder();
-                                finalAi.stream(text, token -> sb.append(token));
-                                aiReply = sb.toString().trim();
+                                finalBot.streamChat(text);
                             } catch (Exception e) {
-                                aiReply = "FastJava Agent response: Ready to serve!";
+                                String err = "FastJava Agent response: Ready to serve!";
+                                System.out.print(FastANSI.FG_BRIGHT_WHITE + err + FastANSI.RESET);
+                                currentStreamBuffer.append(err);
                             }
+                        } else {
+                            String reply = "Hallo " + username + "! Ich bin dein FastJava AI Bot.";
+                            System.out.print(FastANSI.FG_BRIGHT_WHITE + reply + FastANSI.RESET);
+                            currentStreamBuffer.append(reply);
                         }
 
                         long durationMs = System.currentTimeMillis() - t0;
+                        int tokens = tokenCounter.get();
 
-                        // Log AI Message in clean gray/white
-                        System.out.println(FastANSI.FG_BRIGHT_BLACK + "  🤖 [FASTAIBOT / LLAMA]: " + FastANSI.FG_BRIGHT_WHITE + aiReply + FastANSI.RESET);
-                        System.out.println(FastANSI.FG_BRIGHT_BLACK + "     (Latency: " + durationMs + " ms | Zero-Copy Pipeline)\n" + FastANSI.RESET);
+                        System.out.println("\n" + FastANSI.FG_BRIGHT_BLACK + "     (Tokens: " + tokens + " | Latency: " + durationMs + " ms | Zero-Copy Pipeline)\n" + FastANSI.RESET);
 
                         // Send back to Telegram
-                        UniversalMessage replyMsg = UniversalMessage.builder()
-                            .channel(MessagingChannel.TELEGRAM)
-                            .chatId(String.valueOf(chatId))
-                            .text(aiReply)
-                            .build();
+                        String fullReply = currentStreamBuffer.toString().trim();
+                        if (!fullReply.isEmpty()) {
+                            UniversalMessage replyMsg = UniversalMessage.builder()
+                                .channel(MessagingChannel.TELEGRAM)
+                                .chatId(String.valueOf(chatId))
+                                .text(fullReply)
+                                .build();
 
-                        telegram.sendAsync(replyMsg);
+                            telegram.sendAsync(replyMsg);
+                        }
                     }
                 }
                 Thread.sleep(100);
@@ -187,16 +208,6 @@ public final class Demo {
         System.out.println(FastMessagingAnsi.GRAY + "═".repeat(FastMessagingAnsi.TERMINAL_WIDTH) + FastMessagingAnsi.RESET);
         System.out.println(FastMessagingAnsi.BOLD_GREEN + FastMessagingAnsi.center("✔ FastMessaging Telegram Bot Demo Completed Successfully", FastMessagingAnsi.TERMINAL_WIDTH) + FastMessagingAnsi.RESET);
         System.out.println(FastMessagingAnsi.GRAY + "═".repeat(FastMessagingAnsi.TERMINAL_WIDTH) + FastMessagingAnsi.RESET);
-    }
-
-    private static long parseMaxUpdateId(String json) {
-        long max = 0;
-        if (json == null) return 0;
-        Matcher m = Pattern.compile("\"update_id\":(\\d+)").matcher(json);
-        while (m.find()) {
-            max = Math.max(max, Long.parseLong(m.group(1)));
-        }
-        return max;
     }
 
     private static String unescapeJson(String s) {

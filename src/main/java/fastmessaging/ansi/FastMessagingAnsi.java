@@ -86,7 +86,7 @@ public final class FastMessagingAnsi {
         final String latFormatted = String.format("%.2f ns/op", avgLatencyNs);
         final String latPad = padLeft(latFormatted, 16);
 
-        System.out.println(TREE_BRANCH + GRAY + benchTrunc + RESET + " │ " + BOLD_YELLOW + modePad + RESET + " │ " + BOLD_GREEN + opsPad + RESET + " │ " + BOLD_WHITE + latPad + RESET);
+        System.out.println(TREE_BRANCH + GRAY + benchTrunc + RESET + " │ " + GRAY + modePad + RESET + " │ " + BOLD_WHITE + opsPad + RESET + " │ " + GRAY + latPad + RESET);
     }
 
     public static String formatBadge(final String channel) {
