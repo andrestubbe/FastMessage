@@ -253,8 +253,14 @@ public final class Demo {
             final StringBuilder json = new StringBuilder(512);
             json.append("{\"model\":\"").append(model).append("\",\"stream\":true,\"messages\":[");
             json.append("{\"role\":\"system\",\"content\":\"").append(escapeJson(SYSTEM_PROMPT)).append("\"}");
-            for (ChatMessage msg : history) {
-                json.append(",{\"role\":\"").append(msg.role()).append("\",\"content\":\"").append(escapeJson(msg.content())).append("\"}");
+            
+            // Only send last 10 messages to prevent context explosion and loops
+            int startIdx = Math.max(0, history.size() - 10);
+            for (int i = startIdx; i < history.size(); i++) {
+                ChatMessage msg = history.get(i);
+                if (msg.content() != null && !msg.content().trim().isEmpty()) {
+                    json.append(",{\"role\":\"").append(msg.role()).append("\",\"content\":\"").append(escapeJson(msg.content())).append("\"}");
+                }
             }
             json.append("]}");
 
