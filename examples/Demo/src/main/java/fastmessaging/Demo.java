@@ -29,7 +29,7 @@ public final class Demo {
 
     private static final String DEFAULT_TOKEN = resolveToken();
     private static final String DEFAULT_MODEL = "smollm2:1.7b"; // Ollama with automatic GPU offload
-    private static final String SYSTEM_PROMPT = "Du bist ein präziser, extrem hilfreicher KI-Assistent. Antworte auf Deutsch.";
+    private static final String SYSTEM_PROMPT = "Du bist ein lockerer Chat-Partner auf Telegram. Antworte AUSSCHLIESSLICH auf Deutsch, extrem prägnant und meistens in genau einem Satz wie normale Menschen im Chat. Keine langen Aufzählungen.";
 
     private static final int TELEGRAM_STREAM_INTERVAL_MS = 200; // optimal balance: fluid typing without network stutter
 
