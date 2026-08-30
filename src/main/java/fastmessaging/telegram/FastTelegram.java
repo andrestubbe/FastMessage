@@ -160,6 +160,25 @@ public final class FastTelegram {
             .exceptionally(ex -> message.withStatus(MessageStatus.FAILED));
     }
 
+    /**
+     * Polls new updates from Telegram via long-polling getUpdates API.
+     *
+     * @param offset  Identifier of the first update to be returned (or 0 for latest)
+     * @param timeout Timeout in seconds for long polling (e.g. 10s)
+     * @return Raw JSON response string from Telegram
+     */
+    public CompletableFuture<String> getUpdatesAsync(final long offset, final int timeout) {
+        final String url = this.apiBaseUrl + "/bot" + this.botToken + "/getUpdates?offset=" + offset + "&timeout=" + timeout;
+        final HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(url))
+            .GET()
+            .timeout(Duration.ofSeconds(timeout + 5))
+            .build();
+
+        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8))
+            .thenApply(HttpResponse::body);
+    }
+
     public static String escapeMarkdownV2(final String text) {
         if (text == null) return "";
         final StringBuilder sb = new StringBuilder(text.length() + 16);
