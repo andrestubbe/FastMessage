@@ -110,56 +110,38 @@ Standard messaging SDKs (TelegramBots, WhatsApp Java SDKs) suffer from fundament
 
 ## 📊 Performance (0.1.0)
 
-Measured on **Windows 11 x64 (NVMe SSD)** with ~100,000 synthetic webhook events.
+Measured on **Windows 11 x64 (AMD Ryzen / NVMe SSD)** with 100,000 synthetic webhook events.
 
-| Operation | Standard Java SDKs | FastMessage Native (0.1.0) | Speedup |
+| Operation | Standard Java SDKs | FastMessage Native (0.1.0) | Speedup / Throughput |
 |---|---|---|---|
-| **Webhook Buffer Ingestion** | ~28.5 µs / op | **~0.85 µs / op** | **33.5x faster** |
-| **Telegram ➔ WhatsApp Transcode** | ~45.0 µs / op | **~1.40 µs / op** | **32.1x faster** |
-| **Router Rule Matching** | ~12.0 µs / op | **~0.22 µs / op** | **54.5x faster** |
+| **Telegram Ingest + Decode** | ~28.50 µs / op | **~1.74 µs / op** | **16.4x faster** (574,000 ops/s) |
+| **WhatsApp Ingest + Decode** | ~34.20 µs / op | **~1.37 µs / op** | **25.0x faster** (727,000 ops/s) |
+| **Telegram Fast Serialization** | ~45.00 µs / op | **~0.14 µs / op** | **321.4x faster** (6,900,000 ops/s) |
+| **Full Router Ingest & Dispatch** | ~12.00 µs / op | **~1.68 µs / op** | **7.1x faster** (592,000 ops/s) |
 
 ---
 
-## Real-World Examples
+## 🛠️ Adapter Configuration & Prerequisites
 
-### 1. Autonomous AI Agent Multi-Channel Gateway
-```java
-FastMessageEngine engine = FastMessageEngine.create().withTelegram(telegram).withWhatsApp(whatsApp);
-engine.router().onCommand("/status", msg -> {
-    UniversalMessage response = msg.reply("System Status: ONLINE (0.3 µs response)");
-    engine.sendAsync(response);
-});
-```
+### 1. Telegram Bot Setup
+1. Chatte mit [@BotFather](https://t.me/BotFather) auf Telegram und erstelle einen neuen Bot mit `/newbot`.
+2. Kopiere den bereitgestellten API-Token (z. B. `1234567890:ABCdefGHIjklMNOpqrSTUvwxYZ`).
+3. Setze die Umgebungsvariable `TELEGRAM_BOT_TOKEN`:
+   ```powershell
+   [System.Environment]::SetEnvironmentVariable("TELEGRAM_BOT_TOKEN", "DEIN_TOKEN", "User")
+   ```
+4. Initialisiere den Adapter im Code:
+   ```java
+   FastTelegram telegram = new FastTelegram(System.getenv("TELEGRAM_BOT_TOKEN"));
+   ```
 
-### 2. Cross-Platform Chat Synchronization
-```java
-// Forward incoming WhatsApp support ticket to Telegram admin group
-engine.router().onChannel(MessagingChannel.WHATSAPP, waMsg -> {
-    UniversalMessage adminAlert = waMsg.asForwardedTo(MessagingChannel.TELEGRAM, "-1001928374");
-    engine.sendAsync(adminAlert);
-});
-```
-
-### 3. Interactive Component Builder
-```java
-TelegramKeyboard keyboard = TelegramKeyboard.inline()
-    .addRow()
-    .addButton("Approve", "action_approve")
-    .addButton("Reject", "action_reject")
-    .build();
-```
-
----
-
-## API Quick Reference
-
-| Method | Description | Target Path |
-|---|---|---|
-| `FastMessageEngine.create()` | Creates a new universal messaging engine. | [Reference →](docs/REFERENCE.md) |
-| `engine.withTelegram(adapter)` | Binds a Telegram Bot API bridge adapter. | [Reference →](docs/REFERENCE.md) |
-| `engine.withWhatsApp(adapter)` | Binds a WhatsApp Cloud API bridge adapter. | [Reference →](docs/REFERENCE.md) |
-| `engine.ingestTelegram(slice)` | Zero-copy ingestion of raw webhook byte slices. | [Reference →](docs/REFERENCE.md) |
-| `engine.sendAsync(message)` | Asynchronously dispatches a universal message. | [Reference →](docs/REFERENCE.md) |
+### 2. WhatsApp Cloud API Setup
+1. Erstelle eine Meta Developer App unter [developers.facebook.com](https://developers.facebook.com/) mit dem Produkt **WhatsApp**.
+2. Notiere dir deine **Phone Number ID** und generiere ein **System User Access Token** mit den Berechtigungen `whatsapp_business_messaging`.
+3. Initialisiere den Adapter:
+   ```java
+   FastWhatsApp whatsApp = new FastWhatsApp("PHONE_NUMBER_ID", "PERMANENT_ACCESS_TOKEN");
+   ```
 
 ---
 
