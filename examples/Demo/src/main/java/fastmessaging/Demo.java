@@ -108,23 +108,30 @@ public final class Demo {
             try {
                 String updatesJson = telegram.getUpdatesAsync(offset, 1).get();
                 if (updatesJson != null && updatesJson.contains("\"update_id\"")) {
-                    Matcher m = Pattern.compile("\\{\"update_id\":(\\d+).*?\"message\":\\{.*?\"message_id\":(\\d+).*?\"chat\":\\{\"id\":(-?\\d+).*?\"text\":\"(.*?)\"").matcher(updatesJson);
-
-                    while (m.find()) {
-                        long updateId = Long.parseLong(m.group(1));
+                    // Split by {"update_id":
+                    String[] parts = updatesJson.split("\\{\"update_id\":");
+                    for (int i = 1; i < parts.length; i++) {
+                        String part = parts[i];
+                        
+                        Matcher idMatcher = Pattern.compile("^(\\d+)").matcher(part);
+                        if (!idMatcher.find()) continue;
+                        long updateId = Long.parseLong(idMatcher.group(1));
                         offset = Math.max(offset, updateId + 1);
 
-                        long chatId = Long.parseLong(m.group(3));
-                        String rawText = m.group(4);
-                        String text = unescapeJson(rawText);
+                        Matcher chatMatcher = Pattern.compile("\"chat\":\\{[^}]*?\"id\":(-?\\d+)").matcher(part);
+                        if (!chatMatcher.find()) continue;
+                        long chatId = Long.parseLong(chatMatcher.group(1));
 
-                        // Find username/first_name optionally
+                        Matcher textMatcher = Pattern.compile("\"text\":\"(.*?)\"").matcher(part);
+                        if (!textMatcher.find()) continue;
+                        String text = unescapeJson(textMatcher.group(1));
+
                         String username = "user";
-                        Matcher uM = Pattern.compile("\"username\":\"(.*?)\"").matcher(updatesJson);
+                        Matcher uM = Pattern.compile("\"username\":\"(.*?)\"").matcher(part);
                         if (uM.find()) {
                             username = uM.group(1);
                         } else {
-                            Matcher fM = Pattern.compile("\"first_name\":\"(.*?)\"").matcher(updatesJson);
+                            Matcher fM = Pattern.compile("\"first_name\":\"(.*?)\"").matcher(part);
                             if (fM.find()) username = fM.group(1);
                         }
 
