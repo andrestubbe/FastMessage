@@ -1,11 +1,11 @@
 # Changelog
 
-All notable changes to `FastMessaging` will be documented in this file.
+All notable changes to `FastMessage` will be documented in this file.
 
 ## [0.1.0] - 2026-08-28
 
 ### Added
-- **Core Zero-Copy Engine**: Initial release of `FastMessagingEngine` with direct `ByteSlice` memory slicing and zero JVM heap allocations on hot-path ingestion.
+- **Core Zero-Copy Engine**: Initial release of `FastMessageEngine` with direct `ByteSlice` memory slicing and zero JVM heap allocations on hot-path ingestion.
 - **Canonical Data Models**: `UniversalMessage`, `MessagePayload`, `MessageType`, `MessageStatus`, and `MessagingChannel`.
 - **FastTelegram Bridge**:
   - Full webhook update parser (`TelegramUpdate`) supporting messages, callback queries, photos, documents, and locations.

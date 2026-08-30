@@ -1,4 +1,4 @@
-package fastmessaging;
+package FastMessage;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;

@@ -1,7 +1,7 @@
-package fastmessaging;
+package FastMessage;
 
-import fastmessaging.telegram.FastTelegram;
-import fastmessaging.whatsapp.FastWhatsApp;
+import FastMessage.telegram.FastTelegram;
+import FastMessage.whatsapp.FastWhatsApp;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,7 +16,7 @@ import java.util.function.Consumer;
  * Universal High-Performance Zero-Copy Messaging Engine.
  * Coordinates Telegram Bot API, WhatsApp Cloud API, custom adapters, and routing pipelines.
  */
-public final class FastMessagingEngine implements AutoCloseable {
+public final class FastMessageEngine implements AutoCloseable {
 
     @FunctionalInterface
     public interface MessageInterceptor {
@@ -52,35 +52,35 @@ public final class FastMessagingEngine implements AutoCloseable {
     private final AtomicLong errorsCount = new AtomicLong();
     private final AtomicLong totalProcessingTimeNanos = new AtomicLong();
 
-    public FastMessagingEngine() {
+    public FastMessageEngine() {
         this.router = new MessageRouter();
     }
 
-    public static FastMessagingEngine create() {
-        return new FastMessagingEngine();
+    public static FastMessageEngine create() {
+        return new FastMessageEngine();
     }
 
-    public FastMessagingEngine withTelegram(final FastTelegram telegram) {
+    public FastMessageEngine withTelegram(final FastTelegram telegram) {
         this.telegramAdapter = telegram;
         return this;
     }
 
-    public FastMessagingEngine withWhatsApp(final FastWhatsApp whatsApp) {
+    public FastMessageEngine withWhatsApp(final FastWhatsApp whatsApp) {
         this.whatsAppAdapter = whatsApp;
         return this;
     }
 
-    public FastMessagingEngine withCustomChannel(final MessagingChannel channel, final Consumer<UniversalMessage> sender) {
+    public FastMessageEngine withCustomChannel(final MessagingChannel channel, final Consumer<UniversalMessage> sender) {
         this.customEgressAdapters.put(channel, sender);
         return this;
     }
 
-    public FastMessagingEngine addInboundInterceptor(final MessageInterceptor interceptor) {
+    public FastMessageEngine addInboundInterceptor(final MessageInterceptor interceptor) {
         this.inboundInterceptors.add(interceptor);
         return this;
     }
 
-    public FastMessagingEngine addOutboundInterceptor(final MessageInterceptor interceptor) {
+    public FastMessageEngine addOutboundInterceptor(final MessageInterceptor interceptor) {
         this.outboundInterceptors.add(interceptor);
         return this;
     }

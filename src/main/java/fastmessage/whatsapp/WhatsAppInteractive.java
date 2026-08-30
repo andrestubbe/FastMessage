@@ -1,6 +1,6 @@
-package fastmessaging.whatsapp;
+package FastMessage.whatsapp;
 
-import fastmessaging.ByteSlice;
+import FastMessage.ByteSlice;
 
 import java.util.ArrayList;
 import java.util.List;

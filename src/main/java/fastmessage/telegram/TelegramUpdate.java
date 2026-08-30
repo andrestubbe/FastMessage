@@ -1,11 +1,11 @@
-package fastmessaging.telegram;
+package FastMessage.telegram;
 
-import fastmessaging.ByteSlice;
-import fastmessaging.MessagePayload;
-import fastmessaging.MessageStatus;
-import fastmessaging.MessageType;
-import fastmessaging.MessagingChannel;
-import fastmessaging.UniversalMessage;
+import FastMessage.ByteSlice;
+import FastMessage.MessagePayload;
+import FastMessage.MessageStatus;
+import FastMessage.MessageType;
+import FastMessage.MessagingChannel;
+import FastMessage.UniversalMessage;
 
 import java.util.UUID;
 

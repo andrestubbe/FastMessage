@@ -1,7 +1,7 @@
-package fastmessaging;
+package FastMessage;
 
-import fastmessaging.ansi.FastMessagingAnsi;
-import fastmessaging.telegram.FastTelegram;
+import FastMessage.ansi.FastMessageAnsi;
+import FastMessage.telegram.FastTelegram;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -22,7 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * FastMessaging Live Telegram AI Bot & Zero-Copy Engine Demo
+ * FastMessage Live Telegram AI Bot & Zero-Copy Engine Demo
  * Pure zero-dependency streaming direct to console (gray/white) and Telegram chat.
  */
 public final class Demo {
@@ -69,24 +69,24 @@ public final class Demo {
             System.setOut(new java.io.PrintStream(new java.io.FileOutputStream(java.io.FileDescriptor.out), true, java.nio.charset.StandardCharsets.UTF_8));
         } catch (Exception ignored) {}
 
-        FastMessagingAnsi.printHeader(
+        FastMessageAnsi.printHeader(
             "⚡ FAST MESSAGING — TELEGRAM AI BOT & UNIVERSAL ZERO-COPY ENGINE ⚡",
             "Live Telegram Ingress • Local LLM Inference • Real-time Token Streaming"
         );
 
         // 1. Initializing Engine
-        FastMessagingAnsi.printSection("1. INITIALIZING MESSAGING ENGINE & ADAPTERS");
-        final FastMessagingEngine engine = FastMessagingEngine.create();
+        FastMessageAnsi.printSection("1. INITIALIZING MESSAGING ENGINE & ADAPTERS");
+        final FastMessageEngine engine = FastMessageEngine.create();
         final FastTelegram telegram = new FastTelegram(DEFAULT_TOKEN);
         engine.withTelegram(telegram);
 
-        FastMessagingAnsi.printTreeItem("Telegram Adapter", "FastTelegram [t.me/FastJava_AIBot | Token: " + DEFAULT_TOKEN.substring(0, 10) + "...]", false);
-        FastMessagingAnsi.printTreeItem("Payload Engine", "ByteSlice Direct UTF-8 Buffer Slicing (0 String allocs)", false);
-        FastMessagingAnsi.printTreeItem("Routing Pipeline", "Rule-based Predicate Filter + HTTP/2 Stream Pipeline", false);
-        FastMessagingAnsi.printTreeItem("Local AI Backend", "Ollama GPU Accelerated (ollama:" + DEFAULT_MODEL + ")", true);
+        FastMessageAnsi.printTreeItem("Telegram Adapter", "FastTelegram [t.me/FastJava_AIBot | Token: " + DEFAULT_TOKEN.substring(0, 10) + "...]", false);
+        FastMessageAnsi.printTreeItem("Payload Engine", "ByteSlice Direct UTF-8 Buffer Slicing (0 String allocs)", false);
+        FastMessageAnsi.printTreeItem("Routing Pipeline", "Rule-based Predicate Filter + HTTP/2 Stream Pipeline", false);
+        FastMessageAnsi.printTreeItem("Local AI Backend", "Ollama GPU Accelerated (ollama:" + DEFAULT_MODEL + ")", true);
 
         // 2. Zero-Copy Ingestion Bench
-        FastMessagingAnsi.printSection("2. ZERO-COPY PIPELINE BENCHMARK (100,000 WARM ITERATIONS)");
+        FastMessageAnsi.printSection("2. ZERO-COPY PIPELINE BENCHMARK (100,000 WARM ITERATIONS)");
         final String rawTgWebhook = "{\"update_id\":8921004,\"message\":{\"message_id\":5412,\"chat\":{\"id\":-1001928374,\"title\":\"FastJava Core Team\",\"type\":\"supergroup\"},\"from\":{\"id\":998877,\"first_name\":\"Alice\",\"username\":\"alicewonder\"},\"text\":\"/deploy --target=production\",\"date\":1724856254}}";
         final ByteSlice tgSlice = ByteSlice.wrap(rawTgWebhook.getBytes(StandardCharsets.UTF_8));
         
@@ -102,11 +102,11 @@ public final class Demo {
         final long opsPerSec = (long) (totalOps / totalSeconds);
         final double avgNsPerOp = (double) benchElapsed / totalOps;
 
-        FastMessagingAnsi.printBenchmarkRow("Telegram Ingest + Decode", "Zero-Copy", opsPerSec * 11 / 10, avgNsPerOp * 0.9);
-        FastMessagingAnsi.printBenchmarkRow("Telegram Fast Serialization", "Zero-Alloc", opsPerSec, avgNsPerOp);
+        FastMessageAnsi.printBenchmarkRow("Telegram Ingest + Decode", "Zero-Copy", opsPerSec * 11 / 10, avgNsPerOp * 0.9);
+        FastMessageAnsi.printBenchmarkRow("Telegram Fast Serialization", "Zero-Alloc", opsPerSec, avgNsPerOp);
 
         // 3. Live Telegram AI Listener
-        FastMessagingAnsi.printSection("3. LIVE TELEGRAM AI CONVERSATION PROTOCOL");
+        FastMessageAnsi.printSection("3. LIVE TELEGRAM AI CONVERSATION PROTOCOL");
         System.out.println(FG_BRIGHT_BLACK + "  ├── Status         : " + FG_BRIGHT_WHITE + "Active Long-Polling Listener" + RESET);
         System.out.println(FG_BRIGHT_BLACK + "  ├── Bot Link       : " + FG_BRIGHT_WHITE + "https://t.me/FastJava_AIBot" + RESET);
         System.out.println(FG_BRIGHT_BLACK + "  └── Instructions   : " + FG_BRIGHT_WHITE + "Send any message in Telegram to @FastJava_AIBot (or press ENTER here to exit)\n" + RESET);

@@ -1,4 +1,4 @@
-package fastmessaging;
+package FastMessage;
 
 import org.junit.jupiter.api.Test;
 
@@ -11,17 +11,17 @@ public class ByteSliceTest {
 
     @Test
     public void testByteSliceCreationAndSlicing() {
-        final byte[] bytes = "Hello, FastMessaging Zero-Copy World!".getBytes(StandardCharsets.UTF_8);
+        final byte[] bytes = "Hello, FastMessage Zero-Copy World!".getBytes(StandardCharsets.UTF_8);
         final ByteSlice slice = ByteSlice.wrap(bytes);
 
         assertEquals(bytes.length, slice.length());
         assertFalse(slice.isEmpty());
-        assertEquals("Hello, FastMessaging Zero-Copy World!", slice.asUtf8String());
+        assertEquals("Hello, FastMessage Zero-Copy World!", slice.asUtf8String());
 
         final ByteSlice sub = slice.subSlice(7, 20);
-        assertEquals("FastMessaging", sub.asUtf8String());
+        assertEquals("FastMessage", sub.asUtf8String());
         assertEquals(13, sub.length());
-        assertTrue(sub.equalsUtf8("FastMessaging"));
+        assertTrue(sub.equalsUtf8("FastMessage"));
         assertFalse(sub.equalsUtf8("Other"));
     }
 

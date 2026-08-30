@@ -1,17 +1,17 @@
-package fastmessaging.benchmark;
+package FastMessage.benchmark;
 
-import fastmessaging.ByteSlice;
-import fastmessaging.FastMessagingEngine;
-import fastmessaging.MessagePayload;
-import fastmessaging.MessageType;
-import fastmessaging.MessagingChannel;
-import fastmessaging.UniversalMessage;
-import fastmessaging.telegram.FastTelegram;
-import fastmessaging.telegram.TelegramKeyboard;
-import fastmessaging.telegram.TelegramUpdate;
-import fastmessaging.whatsapp.FastWhatsApp;
-import fastmessaging.whatsapp.WhatsAppInteractive;
-import fastmessaging.whatsapp.WhatsAppMessage;
+import FastMessage.ByteSlice;
+import FastMessage.FastMessageEngine;
+import FastMessage.MessagePayload;
+import FastMessage.MessageType;
+import FastMessage.MessagingChannel;
+import FastMessage.UniversalMessage;
+import FastMessage.telegram.FastTelegram;
+import FastMessage.telegram.TelegramKeyboard;
+import FastMessage.telegram.TelegramUpdate;
+import FastMessage.whatsapp.FastWhatsApp;
+import FastMessage.whatsapp.WhatsAppInteractive;
+import FastMessage.whatsapp.WhatsAppMessage;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
@@ -41,7 +41,7 @@ public class MessagingBenchmark {
     private ByteSlice waSlice;
     private FastTelegram telegram;
     private FastWhatsApp whatsApp;
-    private FastMessagingEngine engine;
+    private FastMessageEngine engine;
     private UniversalMessage sampleUniversalMessage;
 
     @Setup
@@ -58,14 +58,14 @@ public class MessagingBenchmark {
         this.telegram = new FastTelegram("bot771234567:AAFn90MockToken");
         this.whatsApp = new FastWhatsApp("109988776655443", "EAAXmockToken");
 
-        this.engine = FastMessagingEngine.create()
+        this.engine = FastMessageEngine.create()
             .withTelegram(this.telegram)
             .withWhatsApp(this.whatsApp);
 
         this.sampleUniversalMessage = UniversalMessage.builder()
             .channel(MessagingChannel.TELEGRAM)
             .chatId("-1001928374")
-            .text("FastMessaging Unified Pipeline Active")
+            .text("FastMessage Unified Pipeline Active")
             .addButton("Approve", "act_approve")
             .addButton("Reject", "act_reject")
             .build();
@@ -98,7 +98,7 @@ public class MessagingBenchmark {
             .button("Confirm", "btn_yes")
             .button("Cancel", "btn_no")
             .row()
-            .urlButton("Documentation", "https://github.com/andrestubbe/FastMessaging");
+            .urlButton("Documentation", "https://github.com/andrestubbe/FastMessage");
         bh.consume(kb.toJson());
     }
 

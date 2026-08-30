@@ -1,11 +1,11 @@
-package fastmessaging.ansi;
+package FastMessage.ansi;
 
 /**
  * 120-column Terminal ANSI Formatter strictly styled for FastJava Hero Demos.
  * Features dark gray tree branches, bold white values, colored channel badges,
  * and middle-path truncation to guarantee precise 120-column layout.
  */
-public final class FastMessagingAnsi {
+public final class FastMessageAnsi {
 
     public static final int TERMINAL_WIDTH = 120;
 
@@ -38,7 +38,7 @@ public final class FastMessagingAnsi {
     public static final String TREE_PIPE   = GRAY + "│   " + RESET;
     public static final String TREE_SPACE  = "    ";
 
-    private FastMessagingAnsi() {}
+    private FastMessageAnsi() {}
 
     public static void printHeader(final String title, final String subtitle) {
         final String border = GRAY + "═".repeat(TERMINAL_WIDTH) + RESET;

@@ -1,10 +1,10 @@
 TITLE:
-FastMessaging: Universal Zero-Copy Messaging Engine for Telegram & WhatsApp in Java ⚡💬
+FastMessage: Universal Zero-Copy Messaging Engine for Telegram & WhatsApp in Java ⚡💬
 
 DESCRIPTION:
-Showcasing FastMessaging, the ultra high-performance zero-copy universal messaging engine for the FastJava ecosystem. Watch FastMessaging ingest, decode, and bridge Telegram Bot API updates and WhatsApp Cloud API webhooks with zero intermediate heap allocations, sub-microsecond latency, and bi-directional cross-platform transcoding.
+Showcasing FastMessage, the ultra high-performance zero-copy universal messaging engine for the FastJava ecosystem. Watch FastMessage ingest, decode, and bridge Telegram Bot API updates and WhatsApp Cloud API webhooks with zero intermediate heap allocations, sub-microsecond latency, and bi-directional cross-platform transcoding.
 
-FastMessaging unites Telegram and WhatsApp into a canonical UniversalMessage format, featuring high-speed rule routing, token-bucket rate limiting, inline/reply interactive button builders, and a 120-column FastANSI telemetry display.
+FastMessage unites Telegram and WhatsApp into a canonical UniversalMessage format, featuring high-speed rule routing, token-bucket rate limiting, inline/reply interactive button builders, and a 120-column FastANSI telemetry display.
 
 TECHNICAL HIGHLIGHTS:
 - Zero-Copy Ingestion: Direct ByteSlice UTF-8 memory buffer indexing avoiding intermediate String/byte[] heap allocations.
@@ -14,7 +14,7 @@ TECHNICAL HIGHLIGHTS:
 - FastANSI 120-Column Terminal HUD: Clean dark-gray framing with bold white values and live throughput telemetry.
 
 GITHUB REPOSITORIES:
-https://github.com/andrestubbe/FastMessaging
+https://github.com/andrestubbe/FastMessage
 https://github.com/andrestubbe/FastCore
 https://github.com/andrestubbe/FastJava
 
@@ -23,4 +23,4 @@ No copies. Ever. Zero allocation on ingestion. Universal bridge at wire speed.
 If you're interested in pushing the JVM to its absolute limits, subscribe for more!
 
 TAGS:
-Java, FastJava, FastMessaging, Telegram, WhatsApp, Messaging Engine, Bot API, Cloud API, Zero-Copy, Performance, JMH, Microbenchmark, ByteSlice, FastANSI, Tech Demo
+Java, FastJava, FastMessage, Telegram, WhatsApp, Messaging Engine, Bot API, Cloud API, Zero-Copy, Performance, JMH, Microbenchmark, ByteSlice, FastANSI, Tech Demo

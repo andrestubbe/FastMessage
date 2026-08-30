@@ -1,9 +1,9 @@
-# The Philosophy of FastMessaging
+# The Philosophy of FastMessage
 
 > [!IMPORTANT]
 > **"No copies. Ever. Zero allocation on ingestion. Universal bridge at wire speed."**
 
-FastMessaging is built on the principle that modern autonomous agents and enterprise services require **high-throughput, zero-copy messaging infrastructure** across fragmented chat platforms. Rather than incurring intermediate string allocations, bulky DOM objects, and multi-tier abstractions, FastMessaging processes raw webhook bytes directly into universal immutable message representations.
+FastMessage is built on the principle that modern autonomous agents and enterprise services require **high-throughput, zero-copy messaging infrastructure** across fragmented chat platforms. Rather than incurring intermediate string allocations, bulky DOM objects, and multi-tier abstractions, FastMessage processes raw webhook bytes directly into universal immutable message representations.
 
 ## Core Tenets
 
@@ -17,10 +17,10 @@ FastMessaging is built on the principle that modern autonomous agents and enterp
    Cross-platform message forwarding (e.g. Telegram ➔ WhatsApp or WhatsApp ➔ Telegram) performs inline format transcoding at sub-microsecond speeds.
 
 4. **Deterministic Latency & GC Freedom**
-   By eliminating temporary heap churn in hot ingestion and serialization paths, FastMessaging guarantees consistent sub-microsecond turnaround times under massive webhook concurrency.
+   By eliminating temporary heap churn in hot ingestion and serialization paths, FastMessage guarantees consistent sub-microsecond turnaround times under massive webhook concurrency.
 
 5. **FastJava Ecosystem Harmony**
    Adheres to strict FastJava standards: 120-column terminal output with `FastANSI`, JMH microbenchmarks, clean modular dependencies, and pure native-grade JVM performance.
 
 ---
-**⚡ FastMessaging — Powering the Next Generation of Universal Chat Automation.**
+**⚡ FastMessage — Powering the Next Generation of Universal Chat Automation.**

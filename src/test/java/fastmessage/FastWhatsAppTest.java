@@ -1,8 +1,8 @@
-package fastmessaging;
+package FastMessage;
 
-import fastmessaging.whatsapp.FastWhatsApp;
-import fastmessaging.whatsapp.WhatsAppInteractive;
-import fastmessaging.whatsapp.WhatsAppMessage;
+import FastMessage.whatsapp.FastWhatsApp;
+import FastMessage.whatsapp.WhatsAppInteractive;
+import FastMessage.whatsapp.WhatsAppMessage;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -59,7 +59,7 @@ public class FastWhatsAppTest {
     public void testInteractiveButtonEncoding() {
         final WhatsAppInteractive interactive = WhatsAppInteractive.buttons("Please select an action:")
             .header("Order Confirmation")
-            .footer("FastMessaging WhatsApp Gateway")
+            .footer("FastMessage WhatsApp Gateway")
             .addButton("pay_now", "Pay Now")
             .addButton("cancel", "Cancel");
 
@@ -76,7 +76,7 @@ public class FastWhatsAppTest {
         final UniversalMessage msg = UniversalMessage.builder()
             .channel(MessagingChannel.WHATSAPP)
             .chatId("15551234567")
-            .text("Welcome to FastMessaging on WhatsApp!")
+            .text("Welcome to FastMessage on WhatsApp!")
             .addButton("Learn More", "btn_learn")
             .build();
 

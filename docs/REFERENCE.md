@@ -1,12 +1,12 @@
-# FastMessaging Technical Reference Manual
+# FastMessage Technical Reference Manual
 
-FastMessaging provides a universal high-performance messaging engine for Telegram Bot API, WhatsApp Cloud API, and custom event streams.
+FastMessage provides a universal high-performance messaging engine for Telegram Bot API, WhatsApp Cloud API, and custom event streams.
 
 ---
 
 ## 1. Core Classes & Data Models
 
-### `fastmessaging.ByteSlice`
+### `FastMessage.ByteSlice`
 Zero-copy UTF-8 byte slice representation for memory buffer indexing without string allocations.
 - `ByteSlice.wrap(byte[] data)`: Wraps full byte array.
 - `ByteSlice.wrap(byte[] data, int offset, int length)`: Wraps sub-slice.
@@ -16,7 +16,7 @@ Zero-copy UTF-8 byte slice representation for memory buffer indexing without str
 - `equalsUtf8(String str)`: Zero-alloc character comparison against string.
 - `parseLong()` / `parseInt()`: High-speed ASCII numeric decoding.
 
-### `fastmessaging.UniversalMessage`
+### `FastMessage.UniversalMessage`
 Canonical, platform-agnostic message model.
 - `id()`: Unique identifier (UUID or platform-assigned).
 - `channel()`: `MessagingChannel.TELEGRAM`, `WHATSAPP`, `UNIFIED`, `CUSTOM`.
@@ -29,7 +29,7 @@ Canonical, platform-agnostic message model.
 - `status()`: `MessageStatus` (`PENDING`, `SENT`, `DELIVERED`, `READ`, `FAILED`).
 - `asForwardedTo(MessagingChannel channel, String targetChatId)`: Transforms message for target channel.
 
-### `fastmessaging.FastMessagingEngine`
+### `FastMessage.FastMessageEngine`
 Central orchestration runtime.
 - `withTelegram(FastTelegram telegram)`: Binds Telegram adapter.
 - `withWhatsApp(FastWhatsApp whatsApp)`: Binds WhatsApp Cloud API adapter.
@@ -40,7 +40,7 @@ Central orchestration runtime.
 - `broadcast(UniversalMessage message, List<MessagingChannel> channels, Map<MessagingChannel, String> targetChats)`: Multicasts across platforms.
 - `metrics()`: Returns live throughput, message counters, and average latency.
 
-### `fastmessaging.MessageRouter`
+### `FastMessage.MessageRouter`
 High-speed rule dispatcher with rate-limiting and deduplication.
 - `addRule(String name, Predicate<UniversalMessage> pred, Consumer<UniversalMessage> handler)`: Adds routing rule.
 - `onChannel(MessagingChannel channel, Consumer<UniversalMessage> handler)`: Channel-specific handler.
@@ -51,7 +51,7 @@ High-speed rule dispatcher with rate-limiting and deduplication.
 
 ---
 
-## 2. Telegram Bridge (`fastmessaging.telegram`)
+## 2. Telegram Bridge (`FastMessage.telegram`)
 
 ### `FastTelegram`
 - `decodeWebhook(ByteSlice slice)`: Parses webhook update into `TelegramUpdate`.
@@ -70,7 +70,7 @@ High-speed rule dispatcher with rate-limiting and deduplication.
 
 ---
 
-## 3. WhatsApp Bridge (`fastmessaging.whatsapp`)
+## 3. WhatsApp Bridge (`FastMessage.whatsapp`)
 
 ### `FastWhatsApp`
 - `decodeWebhook(ByteSlice slice)`: Parses WhatsApp webhook into `WhatsAppMessage`.

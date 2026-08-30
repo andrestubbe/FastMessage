@@ -1,7 +1,7 @@
-package fastmessaging;
+package FastMessage;
 
-import fastmessaging.telegram.FastTelegram;
-import fastmessaging.whatsapp.FastWhatsApp;
+import FastMessage.telegram.FastTelegram;
+import FastMessage.whatsapp.FastWhatsApp;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -12,11 +12,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class FastMessagingEngineTest {
+public class FastMessageEngineTest {
 
     @Test
     public void testEngineIngestionAndMetrics() {
-        final FastMessagingEngine engine = FastMessagingEngine.create()
+        final FastMessageEngine engine = FastMessageEngine.create()
             .withTelegram(new FastTelegram("mock-telegram-token"))
             .withWhatsApp(new FastWhatsApp("mock-phone-id", "mock-whatsapp-token"));
 
@@ -33,7 +33,7 @@ public class FastMessagingEngineTest {
         assertEquals("Ping Telegram", tgMsg.text());
         assertEquals("Ping WhatsApp", waMsg.text());
 
-        final FastMessagingEngine.EngineMetrics metrics = engine.metrics();
+        final FastMessageEngine.EngineMetrics metrics = engine.metrics();
         assertEquals(2, metrics.totalIngested());
         assertEquals(1, metrics.telegramMessages());
         assertEquals(1, metrics.whatsappMessages());
@@ -43,7 +43,7 @@ public class FastMessagingEngineTest {
 
     @Test
     public void testInterceptors() {
-        final FastMessagingEngine engine = FastMessagingEngine.create();
+        final FastMessageEngine engine = FastMessageEngine.create();
 
         // Inbound interceptor modifying text (e.g. profanity filter or tagging)
         engine.addInboundInterceptor(msg -> UniversalMessage.builder()
@@ -63,7 +63,7 @@ public class FastMessagingEngineTest {
 
     @Test
     public void testBroadcast() {
-        final FastMessagingEngine engine = FastMessagingEngine.create();
+        final FastMessageEngine engine = FastMessageEngine.create();
         final List<UniversalMessage> sentMessages = new ArrayList<>();
 
         engine.withCustomChannel(MessagingChannel.CUSTOM, sentMessages::add);

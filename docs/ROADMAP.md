@@ -1,6 +1,6 @@
-# FastMessaging Roadmap
+# FastMessage Roadmap
 
-Future milestones and planned extensions for the FastMessaging engine.
+Future milestones and planned extensions for the FastMessage engine.
 
 ## v0.2.0 — Enterprise Messaging & Media Pipelines
 - [ ] **Direct Native Attachment Streaming**: Zero-copy file and media streaming directly from disk descriptors into HTTP/2 multipart payloads.

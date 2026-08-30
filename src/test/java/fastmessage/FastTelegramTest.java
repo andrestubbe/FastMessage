@@ -1,8 +1,8 @@
-package fastmessaging;
+package FastMessage;
 
-import fastmessaging.telegram.FastTelegram;
-import fastmessaging.telegram.TelegramKeyboard;
-import fastmessaging.telegram.TelegramUpdate;
+import FastMessage.telegram.FastTelegram;
+import FastMessage.telegram.TelegramKeyboard;
+import FastMessage.telegram.TelegramUpdate;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,14 +48,14 @@ public class FastTelegramTest {
             .button("Option 1", "opt_1")
             .button("Option 2", "opt_2")
             .row()
-            .urlButton("Visit Website", "https://github.com/andrestubbe/FastMessaging")
+            .urlButton("Visit Website", "https://github.com/andrestubbe/FastMessage")
             .row();
 
         final String json = kb.toJson();
         assertTrue(json.contains("\"Option 1\""));
         assertTrue(json.contains("\"opt_1\""));
         assertTrue(json.contains("\"Visit Website\""));
-        assertTrue(json.contains("https://github.com/andrestubbe/FastMessaging"));
+        assertTrue(json.contains("https://github.com/andrestubbe/FastMessage"));
     }
 
     @Test
@@ -76,13 +76,13 @@ public class FastTelegramTest {
         final UniversalMessage msg = UniversalMessage.builder()
             .channel(MessagingChannel.TELEGRAM)
             .chatId("123456")
-            .text("Welcome to FastMessaging")
+            .text("Welcome to FastMessage")
             .addButton("Click Here", "act_click")
             .build();
 
         final String encoded = telegram.fromUniversalMessage(msg);
         assertTrue(encoded.contains("\"chat_id\":\"123456\""));
-        assertTrue(encoded.contains("\"Welcome to FastMessaging\""));
+        assertTrue(encoded.contains("\"Welcome to FastMessage\""));
         assertTrue(encoded.contains("\"reply_markup\""));
         assertTrue(encoded.contains("\"act_click\""));
     }

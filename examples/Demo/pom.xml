@@ -5,8 +5,8 @@
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>fastmessaging.demo</groupId>
-    <artifactId>FastMessagingDemo</artifactId>
+    <groupId>FastMessage.demo</groupId>
+    <artifactId>FastMessageDemo</artifactId>
     <version>0.1.0</version>
     <packaging>jar</packaging>
 
@@ -26,7 +26,7 @@
     <dependencies>
         <dependency>
             <groupId>com.github.andrestubbe</groupId>
-            <artifactId>FastMessaging</artifactId>
+            <artifactId>FastMessage</artifactId>
             <version>0.1.0</version>
         </dependency>
         <dependency>
@@ -77,7 +77,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <mainClass>fastmessaging.Demo</mainClass>
+                    <mainClass>FastMessage.Demo</mainClass>
                 </configuration>
             </plugin>
         </plugins>

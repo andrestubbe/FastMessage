@@ -1,6 +1,6 @@
-package fastmessaging.telegram;
+package FastMessage.telegram;
 
-import fastmessaging.ByteSlice;
+import FastMessage.ByteSlice;
 
 import java.util.ArrayList;
 import java.util.List;
