@@ -186,7 +186,9 @@ public final class Demo {
                             }
                         } catch (Exception ignored) {}
 
-                        // Add to memory
+                        // Add user query to conversation history
+                        HISTORY.add(new ChatMessage("user", text));
+
                         int[] col = new int[]{MARGIN};
                         long t0 = System.currentTimeMillis();
                         streamOllamaChat(DEFAULT_MODEL, HISTORY, token -> {
@@ -225,11 +227,15 @@ public final class Demo {
                         int totalTokens = tokenCounter.get();
 
                         String fullReply = currentStreamBuffer.toString().trim();
+                        if (fullReply.isEmpty()) {
+                            fullReply = "Ich habe deine Nachricht erhalten: " + text;
+                            System.out.print(FG_BRIGHT_WHITE + fullReply + RESET);
+                        }
                         HISTORY.add(new ChatMessage("assistant", fullReply));
 
                         // 4. Final Telegram Message Edit (ensures full reply is synced)
                         long tgMsgId = activeTelegramMsgId.get();
-                        if (tgMsgId != 0 && !fullReply.isEmpty()) {
+                        if (tgMsgId != 0) {
                             telegram.editMessageTextAsync(String.valueOf(chatId), tgMsgId, fullReply);
                         }
 
