@@ -13,18 +13,26 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * FastMessaging Live Telegram AI Bot & Zero-Copy Engine Demo
- * Re-uses official FastAIBot engine and conversation history with gray/white FastJava styling.
+ * Styled strictly with FastAIBot 8-char indent, User:/AI: prefixes, and token metrics.
  */
 public final class Demo {
 
     private static final String DEFAULT_TOKEN = resolveToken();
     private static final String DEFAULT_MODEL = "ollama:qwen3.5:0.8b";
-    private static final String SYSTEM_PROMPT = "Du bist ein präziser, freundlicher KI-Assistent. Antworte auf Deutsch, extrem hilfreich und prägnant.";
+    private static final String SYSTEM_PROMPT = "Du bist ein hilfreicher Assistent.";
+
+    private static final int MARGIN = 8;
+    private static final int MAX_COLS = 80;
+    private static final String INDENT = "        ";
+
+    private static final String USER_PREFIX = "User:   ";
+    private static final String AI_PREFIX   = "AI:     ";
 
     private static String resolveToken() {
         String envToken = System.getenv("TELEGRAM_BOT_TOKEN");
@@ -50,6 +58,8 @@ public final class Demo {
         final StringBuilder currentStreamBuffer = new StringBuilder(256);
         final AtomicInteger tokenCounter = new AtomicInteger(0);
 
+        final Consumer<String> streamConsumer = createIndentedStreamConsumer(MARGIN, MAX_COLS, tokenCounter, currentStreamBuffer);
+
         FastAIBot bot = null;
         String aiStatus = "FastAIBot ready (" + DEFAULT_MODEL + ")";
         try {
@@ -57,12 +67,7 @@ public final class Demo {
             bot = new FastAIBot(
                 ai,
                 SYSTEM_PROMPT,
-                token -> {
-                    tokenCounter.incrementAndGet();
-                    currentStreamBuffer.append(token);
-                    System.out.print(FastANSI.FG_BRIGHT_WHITE + token + FastANSI.RESET);
-                    System.out.flush();
-                },
+                streamConsumer,
                 new ChatMLFormatter()
             );
         } catch (Throwable t) {
@@ -113,7 +118,7 @@ public final class Demo {
         inputThread.setDaemon(true);
         inputThread.start();
 
-        // Purge old backlog on startup by setting offset to -1
+        // Purge old backlog on startup
         long offset = 0;
         try {
             String initial = telegram.getUpdatesAsync(-1, 0).get();
@@ -149,20 +154,11 @@ public final class Demo {
                         if (!textMatcher.find()) continue;
                         String text = unescapeJson(textMatcher.group(1));
 
-                        String username = "user";
-                        Matcher uM = Pattern.compile("\"username\":\"(.*?)\"").matcher(part);
-                        if (uM.find()) {
-                            username = uM.group(1);
-                        } else {
-                            Matcher fM = Pattern.compile("\"first_name\":\"(.*?)\"").matcher(part);
-                            if (fM.find()) username = fM.group(1);
-                        }
+                        // 1. Print User Prompt in FastAIBot style
+                        System.out.print(FastANSI.FG_BRIGHT_BLACK + USER_PREFIX + FastANSI.FG_BRIGHT_WHITE + text + FastANSI.RESET + "\n");
 
-                        // Log User Message in clean gray/white
-                        System.out.println(FastANSI.FG_BRIGHT_BLACK + "  👤 [TELEGRAM @" + username + "]: " + FastANSI.FG_BRIGHT_WHITE + text + FastANSI.RESET);
-
-                        // Generate AI Response using official FastAIBot
-                        System.out.print(FastANSI.FG_BRIGHT_BLACK + "  🤖 [FASTAIBOT / LLAMA]: " + FastANSI.RESET);
+                        // 2. Print AI Prompt in FastAIBot style
+                        System.out.print(FastANSI.FG_BRIGHT_BLACK + AI_PREFIX + FastANSI.RESET);
                         currentStreamBuffer.setLength(0);
                         tokenCounter.set(0);
 
@@ -176,17 +172,19 @@ public final class Demo {
                                 currentStreamBuffer.append(err);
                             }
                         } else {
-                            String reply = "Hallo " + username + "! Ich bin dein FastJava AI Bot.";
+                            String reply = "Hallo! Ich bin dein FastJava AI Bot.";
                             System.out.print(FastANSI.FG_BRIGHT_WHITE + reply + FastANSI.RESET);
                             currentStreamBuffer.append(reply);
                         }
 
                         long durationMs = System.currentTimeMillis() - t0;
-                        int tokens = tokenCounter.get();
+                        int totalTokens = tokenCounter.get();
 
-                        System.out.println("\n" + FastANSI.FG_BRIGHT_BLACK + "     (Tokens: " + tokens + " | Latency: " + durationMs + " ms | Zero-Copy Pipeline)\n" + FastANSI.RESET);
+                        // 3. Print Metrics Summary in FastAIBot style
+                        System.out.println("\n" + INDENT + FastANSI.FG_BRIGHT_BLACK + String.format("(Tokens used: %d | Time: %d ms)", totalTokens, durationMs) + FastANSI.RESET);
+                        System.out.println();
 
-                        // Send back to Telegram
+                        // Send response back to Telegram
                         String fullReply = currentStreamBuffer.toString().trim();
                         if (!fullReply.isEmpty()) {
                             UniversalMessage replyMsg = UniversalMessage.builder()
@@ -205,9 +203,39 @@ public final class Demo {
             }
         }
 
-        System.out.println(FastMessagingAnsi.GRAY + "═".repeat(FastMessagingAnsi.TERMINAL_WIDTH) + FastMessagingAnsi.RESET);
-        System.out.println(FastMessagingAnsi.BOLD_GREEN + FastMessagingAnsi.center("✔ FastMessaging Telegram Bot Demo Completed Successfully", FastMessagingAnsi.TERMINAL_WIDTH) + FastMessagingAnsi.RESET);
-        System.out.println(FastMessagingAnsi.GRAY + "═".repeat(FastMessagingAnsi.TERMINAL_WIDTH) + FastMessagingAnsi.RESET);
+        System.out.println("\n" + INDENT + FastANSI.FG_BRIGHT_WHITE + "Exiting the current session. If you need further assistance, let me know!" + FastANSI.RESET);
+        System.out.println(INDENT + "😊\n");
+    }
+
+    private static Consumer<String> createIndentedStreamConsumer(
+            int margin, 
+            int maxCols, 
+            AtomicInteger tokenCounter,
+            StringBuilder buffer
+    ) {
+        String indent = " ".repeat(margin);
+        int[] col = new int[]{margin};
+
+        return token -> {
+            tokenCounter.incrementAndGet();
+            buffer.append(token);
+            for (int i = 0; i < token.length(); i++) {
+                char c = token.charAt(i);
+                if (c == '\n') {
+                    System.out.print("\n" + indent);
+                    col[0] = margin;
+                } else {
+                    if (col[0] >= maxCols && (c == ' ' || c == '\t')) {
+                        System.out.print("\n" + indent);
+                        col[0] = margin;
+                    } else {
+                        System.out.print(FastANSI.FG_BRIGHT_WHITE + String.valueOf(c) + FastANSI.RESET);
+                        col[0]++;
+                    }
+                }
+            }
+            System.out.flush();
+        };
     }
 
     private static String unescapeJson(String s) {
