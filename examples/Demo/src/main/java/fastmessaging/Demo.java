@@ -99,7 +99,22 @@ public final class Demo {
         inputThread.setDaemon(true);
         inputThread.start();
 
+        // Purge old backlog on startup by setting offset to -1
         long offset = 0;
+        try {
+            String initial = telegram.getUpdatesAsync(-1, 0).get();
+            if (initial != null && initial.contains("\"update_id\":")) {
+                Matcher m = Pattern.compile("\"update_id\":(\\d+)").matcher(initial);
+                while (m.find()) {
+                    offset = Math.max(offset, Long.parseLong(m.group(1)) + 1);
+                }
+                // Confirm offset flush to Telegram
+                if (offset > 0) {
+                    telegram.getUpdatesAsync(offset, 0).get();
+                }
+            }
+        } catch (Exception ignored) {}
+
         while (running.get()) {
             try {
                 String updatesJson = telegram.getUpdatesAsync(offset, 1).get();
