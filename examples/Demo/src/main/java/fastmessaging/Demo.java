@@ -31,7 +31,7 @@ public final class Demo {
     private static final String DEFAULT_MODEL = "smollm2:1.7b";
     private static final String SYSTEM_PROMPT = "Du bist ein präziser, extrem hilfreicher KI-Assistent. Antworte auf Deutsch.";
 
-    private static final int TELEGRAM_STREAM_INTERVAL_MS = 150; // aggressive streaming test
+    private static final int TELEGRAM_STREAM_INTERVAL_MS = 60; // ultra-fast typing stream test
 
     private static final int MARGIN = 8;
     private static final int MAX_COLS = 80;
