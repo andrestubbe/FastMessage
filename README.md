@@ -119,7 +119,7 @@ FastMessage is rigorously profiled using synthetic high-throughput streams and *
 | **Telegram Fast Serialization** | ~144.93 ns | > 6,900,000 ops/s | **321.4x faster** (Zero-Alloc) |
 | **Full Router Ingest & Dispatch** | ~1,688.55 ns | > 592,000 ops/s | **7.1x faster** (Zero-Alloc) |
 
-*Measured on Windows 11 x64, Intel Iris Xe / AMD Ryzen (Surface Pro / High-Performance NVMe), JDK 21.0.12.*
+*Measured on Windows 11, Intel Core i5-1135G7 (Surface Pro 8), JDK 21.0.12.*
 
 ---
 
