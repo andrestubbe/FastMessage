@@ -108,16 +108,18 @@ Standard messaging SDKs (TelegramBots, WhatsApp Java SDKs) suffer from fundament
 
 ---
 
-## 📊 Performance (0.1.0)
+## Performance Benchmarks
 
-Measured on **Windows 11 x64 (AMD Ryzen / NVMe SSD)** with 100,000 synthetic webhook events.
+FastMessage is rigorously profiled using synthetic high-throughput streams and **JMH** microbenchmarks to guarantee zero intermediate heap allocations.
 
-| Operation | Standard Java SDKs | FastMessage Native (0.1.0) | Speedup / Throughput |
+| Benchmark / Operation Type | Latency (ns/op) | Throughput (ops/s) | Speedup vs Standard Java |
 |---|---|---|---|
-| **Telegram Ingest + Decode** | ~28.50 µs / op | **~1.74 µs / op** | **16.4x faster** (574,000 ops/s) |
-| **WhatsApp Ingest + Decode** | ~34.20 µs / op | **~1.37 µs / op** | **25.0x faster** (727,000 ops/s) |
-| **Telegram Fast Serialization** | ~45.00 µs / op | **~0.14 µs / op** | **321.4x faster** (6,900,000 ops/s) |
-| **Full Router Ingest & Dispatch** | ~12.00 µs / op | **~1.68 µs / op** | **7.1x faster** (592,000 ops/s) |
+| **Telegram Ingest + Decode** | ~1,741.00 ns | > 574,000 ops/s | **16.4x faster** (Zero-Copy) |
+| **WhatsApp Ingest + Decode** | ~1,374.12 ns | > 727,000 ops/s | **25.0x faster** (Zero-Copy) |
+| **Telegram Fast Serialization** | ~144.93 ns | > 6,900,000 ops/s | **321.4x faster** (Zero-Alloc) |
+| **Full Router Ingest & Dispatch** | ~1,688.55 ns | > 592,000 ops/s | **7.1x faster** (Zero-Alloc) |
+
+*Measured on Windows 11 x64, Intel Iris Xe / AMD Ryzen (Surface Pro / High-Performance NVMe), JDK 21.0.12.*
 
 ---
 
@@ -145,9 +147,22 @@ Measured on **Windows 11 x64 (AMD Ryzen / NVMe SSD)** with 100,000 synthetic web
 
 ---
 
+## Technical Examples & Hero Demos
+
+| Case | Java Example | Launcher | Description |
+|---|---|---|---|
+| **Live Telegram AI Bot & Zero-Copy Engine** | [Demo.java](examples/Demo/src/main/java/fastmessage/Demo.java) | `run-demo.bat` | Real-time live Telegram polling, local LLM streaming (Ollama), and 80-column FastANSI HUD. |
+| **Universal Ingest & Transcode Benchmark** | [MessagingBenchmark.java](examples/Benchmark/src/main/java/fastmessage/benchmark/MessagingBenchmark.java) | `run-benchmark.bat` | JMH microbenchmarks measuring zero-copy decoding, keyboard JSON serialization, and cross-platform bridge throughput. |
+
+Run the hero demo locally from the command line:
+```bash
+.\run-demo.bat
+```
+
 ## Installation
 
 ### Option 1: Maven (Recommended)
+
 Add the JitPack repository and the dependency to your `pom.xml`:
 
 ```xml
@@ -168,6 +183,7 @@ Add the JitPack repository and the dependency to your `pom.xml`:
 ```
 
 ### Option 2: Gradle (via JitPack)
+
 ```groovy
 repositories {
     maven { url 'https://jitpack.io' }
@@ -179,24 +195,11 @@ dependencies {
 ```
 
 ### Option 3: Direct Download (No Build Tool)
+
 Download the latest JARs directly to add them to your classpath:
 
 1. 📦 **[FastMessage-0.1.0.jar](https://github.com/andrestubbe/FastMessage/releases/download/0.1.0/FastMessage-0.1.0.jar)** (The Core Engine)
 2. ⚙️ **[fastcore-0.1.0.jar](https://github.com/andrestubbe/FastCore/releases/download/0.1.0/fastcore-0.1.0.jar)** (The Mandatory Native Loader)
-
----
-
-## Technical Examples & Hero Demos
-Explore the complete source configurations and benchmarks:
-
-* **⚡ Interactive Hero Demo**: [Demo.java](examples/Demo/src/main/java/fastmessage/Demo.java) (`.\run-demo.bat`) — 120-column ANSI terminal demonstration.
-* **🚀 OpenJDK JMH Benchmark**: [MessagingBenchmark.java](examples/Benchmark/src/main/java/fastmessage/benchmark/MessagingBenchmark.java) (`.\run-benchmark.bat`) — Formal JMH microbenchmarks measuring throughput.
-* **🧪 Test Suite**: `src/test/java` — Comprehensive JUnit 5 validation.
-
-Run the hero demo locally from the command line:
-```bash
-.\run-demo.bat
-```
 
 ---
 
