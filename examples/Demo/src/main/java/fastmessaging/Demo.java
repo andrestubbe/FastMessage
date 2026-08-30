@@ -31,6 +31,8 @@ public final class Demo {
     private static final String DEFAULT_MODEL = "smollm2:1.7b";
     private static final String SYSTEM_PROMPT = "Du bist ein präziser, extrem hilfreicher KI-Assistent. Antworte auf Deutsch.";
 
+    private static final int TELEGRAM_STREAM_INTERVAL_MS = 150; // aggressive streaming test
+
     private static final int MARGIN = 8;
     private static final int MAX_COLS = 80;
     private static final String INDENT = "        ";
@@ -207,7 +209,7 @@ public final class Demo {
                             long cId = activeChatId.get();
                             long mId = activeTelegramMsgId.get();
                             long now = System.currentTimeMillis();
-                            if (cId != 0 && mId != 0 && now - lastTelegramEditMs.get() > 300) {
+                            if (cId != 0 && mId != 0 && now - lastTelegramEditMs.get() > TELEGRAM_STREAM_INTERVAL_MS) {
                                 lastTelegramEditMs.set(now);
                                 telegram.editMessageTextAsync(String.valueOf(cId), mId, currentStreamBuffer.toString() + " ▌");
                             }
