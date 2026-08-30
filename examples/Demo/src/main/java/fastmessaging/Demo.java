@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
 public final class Demo {
 
     private static final String DEFAULT_TOKEN = resolveToken();
-    private static final String DEFAULT_MODEL = "smollm2:1.7b";
+    private static final String DEFAULT_MODEL = "smollm2:1.7b"; // Ollama with automatic GPU offload
     private static final String SYSTEM_PROMPT = "Du bist ein präziser, extrem hilfreicher KI-Assistent. Antworte auf Deutsch.";
 
     private static final int TELEGRAM_STREAM_INTERVAL_MS = 200; // optimal balance: fluid typing without network stutter
@@ -83,7 +83,7 @@ public final class Demo {
         FastMessagingAnsi.printTreeItem("Telegram Adapter", "FastTelegram [t.me/FastJava_AIBot | Token: " + DEFAULT_TOKEN.substring(0, 10) + "...]", false);
         FastMessagingAnsi.printTreeItem("Payload Engine", "ByteSlice Direct UTF-8 Buffer Slicing (0 String allocs)", false);
         FastMessagingAnsi.printTreeItem("Routing Pipeline", "Rule-based Predicate Filter + HTTP/2 Stream Pipeline", false);
-        FastMessagingAnsi.printTreeItem("Local AI Backend", "Ollama LLM ready (ollama:" + DEFAULT_MODEL + ")", true);
+        FastMessagingAnsi.printTreeItem("Local AI Backend", "Ollama GPU Accelerated (ollama:" + DEFAULT_MODEL + ")", true);
 
         // 2. Zero-Copy Ingestion Bench
         FastMessagingAnsi.printSection("2. ZERO-COPY PIPELINE BENCHMARK (100,000 WARM ITERATIONS)");
