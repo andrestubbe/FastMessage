@@ -63,6 +63,10 @@ public final class Demo {
     }
 
     public static void main(String[] args) {
+        try {
+            System.setOut(new java.io.PrintStream(new java.io.FileOutputStream(java.io.FileDescriptor.out), true, java.nio.charset.StandardCharsets.UTF_8));
+        } catch (Exception ignored) {}
+
         FastMessagingAnsi.printHeader(
             "⚡ FAST MESSAGING — TELEGRAM AI BOT & UNIVERSAL ZERO-COPY ENGINE ⚡",
             "Live Telegram Ingress • Local LLM Inference • Real-time Token Streaming"
@@ -195,19 +199,23 @@ public final class Demo {
                             tokenCounter.incrementAndGet();
                             currentStreamBuffer.append(token);
 
-                            // FastAIBot Exact Word-Wrapping Stream
-                            for (int idx = 0; idx < token.length(); idx++) {
-                                char c = token.charAt(idx);
-                                if (c == '\n') {
+                            // FastAIBot Exact Word-Wrapping Stream (with multi-byte emoji code-point support)
+                            for (int idx = 0; idx < token.length(); ) {
+                                int cp = token.codePointAt(idx);
+                                int charCount = Character.charCount(cp);
+                                idx += charCount;
+
+                                if (cp == '\n') {
                                     System.out.print("\n" + INDENT);
                                     col[0] = MARGIN;
                                 } else {
-                                    if (col[0] >= MAX_COLS && (c == ' ' || c == '\t')) {
+                                    if (col[0] >= MAX_COLS && (cp == ' ' || cp == '\t')) {
                                         System.out.print("\n" + INDENT);
                                         col[0] = MARGIN;
                                     } else {
-                                        System.out.print(FG_BRIGHT_WHITE + String.valueOf(c) + RESET);
-                                        col[0]++;
+                                        String glyph = new String(Character.toChars(cp));
+                                        System.out.print(FG_BRIGHT_WHITE + glyph + RESET);
+                                        col[0] += (cp > 0xFFFF) ? 2 : 1;
                                     }
                                 }
                             }
