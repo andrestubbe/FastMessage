@@ -187,20 +187,26 @@ public final class Demo {
                         } catch (Exception ignored) {}
 
                         // Add to memory
-                        HISTORY.add(new ChatMessage("user", text));
-
+                        int[] col = new int[]{MARGIN};
                         long t0 = System.currentTimeMillis();
                         streamOllamaChat(DEFAULT_MODEL, HISTORY, token -> {
                             tokenCounter.incrementAndGet();
                             currentStreamBuffer.append(token);
 
-                            // FastAIBot Console Stream
+                            // FastAIBot Exact Word-Wrapping Stream
                             for (int idx = 0; idx < token.length(); idx++) {
                                 char c = token.charAt(idx);
                                 if (c == '\n') {
                                     System.out.print("\n" + INDENT);
+                                    col[0] = MARGIN;
                                 } else {
-                                    System.out.print(FG_BRIGHT_WHITE + String.valueOf(c) + RESET);
+                                    if (col[0] >= MAX_COLS && (c == ' ' || c == '\t')) {
+                                        System.out.print("\n" + INDENT);
+                                        col[0] = MARGIN;
+                                    } else {
+                                        System.out.print(FG_BRIGHT_WHITE + String.valueOf(c) + RESET);
+                                        col[0]++;
+                                    }
                                 }
                             }
                             System.out.flush();
