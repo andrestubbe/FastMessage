@@ -23,8 +23,16 @@ import java.util.regex.Pattern;
  */
 public final class Demo {
 
-    private static final String DEFAULT_TOKEN = "8669523006:AAHtf4cNIcBAckblIPtoC8twAvV3EYClZYI";
+    private static final String DEFAULT_TOKEN = resolveToken();
     private static final String DEFAULT_MODEL = "ollama:qwen2.5:0.5b";
+
+    private static String resolveToken() {
+        String envToken = System.getenv("TELEGRAM_BOT_TOKEN");
+        if (envToken != null && !envToken.trim().isEmpty()) {
+            return envToken.trim();
+        }
+        return "8669523006:AAHtf4cNIcBAckblIPtoC8twAvV3EYClZYI";
+    }
 
     public static void main(String[] args) {
         FastMessagingAnsi.printHeader(
