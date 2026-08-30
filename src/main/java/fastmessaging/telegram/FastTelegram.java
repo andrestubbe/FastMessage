@@ -179,6 +179,29 @@ public final class FastTelegram {
             .thenApply(HttpResponse::body);
     }
 
+    /**
+     * Updates an existing message in Telegram for real-time token streaming.
+     *
+     * @param chatId    Target chat id
+     * @param messageId Message id to edit
+     * @param text      New text payload
+     * @return CompletableFuture with update response
+     */
+    public CompletableFuture<String> editMessageTextAsync(final String chatId, final long messageId, final String text) {
+        final String jsonBody = "{\"chat_id\":\"" + escapeJson(chatId) + "\",\"message_id\":" + messageId + ",\"text\":\"" + escapeJson(text) + "\"}";
+        final String url = this.apiBaseUrl + "/bot" + this.botToken + "/editMessageText";
+
+        final HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(url))
+            .header("Content-Type", "application/json")
+            .POST(HttpRequest.BodyPublishers.ofString(jsonBody, StandardCharsets.UTF_8))
+            .timeout(Duration.ofSeconds(10))
+            .build();
+
+        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8))
+            .thenApply(HttpResponse::body);
+    }
+
     public static String escapeMarkdownV2(final String text) {
         if (text == null) return "";
         final StringBuilder sb = new StringBuilder(text.length() + 16);

@@ -13,19 +13,20 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * FastMessaging Live Telegram AI Bot & Zero-Copy Engine Demo
- * Styled strictly with FastAIBot 8-char indent, User:/AI: prefixes, and token metrics.
+ * Real-time bidirectional token streaming to console and Telegram chat with rate-limited editMessageText.
  */
 public final class Demo {
 
     private static final String DEFAULT_TOKEN = resolveToken();
     private static final String DEFAULT_MODEL = "ollama:qwen3.5:0.8b";
-    private static final String SYSTEM_PROMPT = "Du bist ein hilfreicher Assistent.";
+    private static final String SYSTEM_PROMPT = "Du bist ein präziser, extrem hilfreicher KI-Assistent.";
 
     private static final int MARGIN = 8;
     private static final int MAX_COLS = 80;
@@ -45,7 +46,7 @@ public final class Demo {
     public static void main(String[] args) {
         FastMessagingAnsi.printHeader(
             "⚡ FAST MESSAGING — TELEGRAM AI BOT & UNIVERSAL ZERO-COPY ENGINE ⚡",
-            "Live Telegram Ingress • Local LLM Inference • Stateful Conversation Protocol"
+            "Live Telegram Ingress • Local LLM Inference • Real-time Token Streaming"
         );
 
         // 1. Initializing Engine
@@ -57,8 +58,34 @@ public final class Demo {
         // 2. Initializing AI Model & FastAIBot
         final StringBuilder currentStreamBuffer = new StringBuilder(256);
         final AtomicInteger tokenCounter = new AtomicInteger(0);
+        final AtomicLong activeChatId = new AtomicLong(0);
+        final AtomicLong activeTelegramMsgId = new AtomicLong(0);
+        final AtomicLong lastTelegramEditMs = new AtomicLong(0);
 
-        final Consumer<String> streamConsumer = createIndentedStreamConsumer(MARGIN, MAX_COLS, tokenCounter, currentStreamBuffer);
+        final Consumer<String> streamConsumer = token -> {
+            tokenCounter.incrementAndGet();
+            currentStreamBuffer.append(token);
+
+            // FastAIBot Console Stream
+            for (int i = 0; i < token.length(); i++) {
+                char c = token.charAt(i);
+                if (c == '\n') {
+                    System.out.print("\n" + INDENT);
+                } else {
+                    System.out.print(FastANSI.FG_BRIGHT_WHITE + String.valueOf(c) + FastANSI.RESET);
+                }
+            }
+            System.out.flush();
+
+            // Real-time Telegram Live Stream (throttled to ~300ms to avoid Telegram rate limits)
+            long cId = activeChatId.get();
+            long mId = activeTelegramMsgId.get();
+            long now = System.currentTimeMillis();
+            if (cId != 0 && mId != 0 && now - lastTelegramEditMs.get() > 300) {
+                lastTelegramEditMs.set(now);
+                telegram.editMessageTextAsync(String.valueOf(cId), mId, currentStreamBuffer.toString() + " ▌");
+            }
+        };
 
         FastAIBot bot = null;
         String aiStatus = "FastAIBot ready (" + DEFAULT_MODEL + ")";
@@ -162,6 +189,24 @@ public final class Demo {
                         currentStreamBuffer.setLength(0);
                         tokenCounter.set(0);
 
+                        // 3. Send initial placeholder message to Telegram to stream into
+                        activeChatId.set(chatId);
+                        activeTelegramMsgId.set(0);
+                        lastTelegramEditMs.set(System.currentTimeMillis());
+
+                        UniversalMessage initialMsg = UniversalMessage.builder()
+                            .channel(MessagingChannel.TELEGRAM)
+                            .chatId(String.valueOf(chatId))
+                            .text("thinking... ▌")
+                            .build();
+
+                        try {
+                            UniversalMessage sent = telegram.sendAsync(initialMsg).get();
+                            if (sent != null && sent.platformMessageId() != null) {
+                                activeTelegramMsgId.set(Long.parseLong(sent.platformMessageId()));
+                            }
+                        } catch (Exception ignored) {}
+
                         long t0 = System.currentTimeMillis();
                         if (finalBot != null) {
                             try {
@@ -180,21 +225,16 @@ public final class Demo {
                         long durationMs = System.currentTimeMillis() - t0;
                         int totalTokens = tokenCounter.get();
 
-                        // 3. Print Metrics Summary in FastAIBot style
+                        // 4. Final Telegram Message Edit (remove cursor)
+                        String finalReply = currentStreamBuffer.toString().trim();
+                        long tgMsgId = activeTelegramMsgId.get();
+                        if (tgMsgId != 0 && !finalReply.isEmpty()) {
+                            telegram.editMessageTextAsync(String.valueOf(chatId), tgMsgId, finalReply);
+                        }
+
+                        // 5. Print Metrics Summary in FastAIBot style
                         System.out.println("\n" + INDENT + FastANSI.FG_BRIGHT_BLACK + String.format("(Tokens used: %d | Time: %d ms)", totalTokens, durationMs) + FastANSI.RESET);
                         System.out.println();
-
-                        // Send response back to Telegram
-                        String fullReply = currentStreamBuffer.toString().trim();
-                        if (!fullReply.isEmpty()) {
-                            UniversalMessage replyMsg = UniversalMessage.builder()
-                                .channel(MessagingChannel.TELEGRAM)
-                                .chatId(String.valueOf(chatId))
-                                .text(fullReply)
-                                .build();
-
-                            telegram.sendAsync(replyMsg);
-                        }
                     }
                 }
                 Thread.sleep(100);
@@ -205,37 +245,6 @@ public final class Demo {
 
         System.out.println("\n" + INDENT + FastANSI.FG_BRIGHT_WHITE + "Exiting the current session. If you need further assistance, let me know!" + FastANSI.RESET);
         System.out.println(INDENT + "😊\n");
-    }
-
-    private static Consumer<String> createIndentedStreamConsumer(
-            int margin, 
-            int maxCols, 
-            AtomicInteger tokenCounter,
-            StringBuilder buffer
-    ) {
-        String indent = " ".repeat(margin);
-        int[] col = new int[]{margin};
-
-        return token -> {
-            tokenCounter.incrementAndGet();
-            buffer.append(token);
-            for (int i = 0; i < token.length(); i++) {
-                char c = token.charAt(i);
-                if (c == '\n') {
-                    System.out.print("\n" + indent);
-                    col[0] = margin;
-                } else {
-                    if (col[0] >= maxCols && (c == ' ' || c == '\t')) {
-                        System.out.print("\n" + indent);
-                        col[0] = margin;
-                    } else {
-                        System.out.print(FastANSI.FG_BRIGHT_WHITE + String.valueOf(c) + FastANSI.RESET);
-                        col[0]++;
-                    }
-                }
-            }
-            System.out.flush();
-        };
     }
 
     private static String unescapeJson(String s) {
