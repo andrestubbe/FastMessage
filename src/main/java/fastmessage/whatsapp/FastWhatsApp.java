@@ -1,11 +1,11 @@
-package FastMessage.whatsapp;
+package fastmessage.whatsapp;
 
-import FastMessage.ByteSlice;
-import FastMessage.MessagePayload;
-import FastMessage.MessageStatus;
-import FastMessage.MessageType;
-import FastMessage.MessagingChannel;
-import FastMessage.UniversalMessage;
+import fastmessage.ByteSlice;
+import fastmessage.MessagePayload;
+import fastmessage.MessageStatus;
+import fastmessage.MessageType;
+import fastmessage.MessagingChannel;
+import fastmessage.UniversalMessage;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;

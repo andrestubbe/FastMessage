@@ -1,4 +1,4 @@
-package FastMessage;
+package fastmessage;
 
 import java.util.ArrayList;
 import java.util.Collections;

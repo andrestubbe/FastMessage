@@ -21,8 +21,6 @@
             <groupId>com.github.andrestubbe</groupId>
             <artifactId>FastMessage</artifactId>
             <version>0.1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../../target/FastMessage-0.1.0.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.openjdk.jmh</groupId>

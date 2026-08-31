@@ -1,4 +1,4 @@
-package FastMessage;
+package fastmessage;
 
 /**
  * Universal message categories supported across Telegram, WhatsApp, and Custom bridges.

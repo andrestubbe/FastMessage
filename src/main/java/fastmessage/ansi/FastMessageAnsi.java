@@ -1,4 +1,4 @@
-package FastMessage.ansi;
+package fastmessage.ansi;
 
 /**
  * 120-column Terminal ANSI Formatter strictly styled for FastJava Hero Demos.

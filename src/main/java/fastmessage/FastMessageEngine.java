@@ -1,7 +1,7 @@
-package FastMessage;
+package fastmessage;
 
-import FastMessage.telegram.FastTelegram;
-import FastMessage.whatsapp.FastWhatsApp;
+import fastmessage.telegram.FastTelegram;
+import fastmessage.whatsapp.FastWhatsApp;
 
 import java.util.ArrayList;
 import java.util.Collections;

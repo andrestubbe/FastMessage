@@ -1,7 +1,7 @@
-package FastMessage;
+package fastmessage;
 
-import FastMessage.ansi.FastMessageAnsi;
-import FastMessage.telegram.FastTelegram;
+import fastmessage.ansi.FastMessageAnsi;
+import fastmessage.telegram.FastTelegram;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

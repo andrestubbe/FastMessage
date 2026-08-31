@@ -1,10 +1,10 @@
-package FastMessage;
+package fastmessage;
 
-import FastMessage.ansi.FastMessageAnsi;
-import FastMessage.telegram.FastTelegram;
-import FastMessage.telegram.TelegramKeyboard;
-import FastMessage.whatsapp.FastWhatsApp;
-import FastMessage.whatsapp.WhatsAppInteractive;
+import fastmessage.ansi.FastMessageAnsi;
+import fastmessage.telegram.FastTelegram;
+import fastmessage.telegram.TelegramKeyboard;
+import fastmessage.whatsapp.FastWhatsApp;
+import fastmessage.whatsapp.WhatsAppInteractive;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;

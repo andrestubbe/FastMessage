@@ -1,8 +1,8 @@
-package FastMessage;
+package fastmessage;
 
-import FastMessage.whatsapp.FastWhatsApp;
-import FastMessage.whatsapp.WhatsAppInteractive;
-import FastMessage.whatsapp.WhatsAppMessage;
+import fastmessage.whatsapp.FastWhatsApp;
+import fastmessage.whatsapp.WhatsAppInteractive;
+import fastmessage.whatsapp.WhatsAppMessage;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;

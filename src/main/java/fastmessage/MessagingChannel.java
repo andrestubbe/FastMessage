@@ -1,4 +1,4 @@
-package FastMessage;
+package fastmessage;
 
 /**
  * Supported messaging transport platforms and channels.

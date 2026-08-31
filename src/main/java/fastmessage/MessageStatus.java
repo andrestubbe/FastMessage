@@ -1,4 +1,4 @@
-package FastMessage;
+package fastmessage;
 
 /**
  * Lifecycle and delivery statuses for UniversalMessage instances.

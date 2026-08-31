@@ -1,4 +1,4 @@
-package FastMessage;
+package fastmessage;
 
 import org.junit.jupiter.api.Test;
 

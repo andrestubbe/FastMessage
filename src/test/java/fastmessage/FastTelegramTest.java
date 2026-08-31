@@ -1,8 +1,8 @@
-package FastMessage;
+package fastmessage;
 
-import FastMessage.telegram.FastTelegram;
-import FastMessage.telegram.TelegramKeyboard;
-import FastMessage.telegram.TelegramUpdate;
+import fastmessage.telegram.FastTelegram;
+import fastmessage.telegram.TelegramKeyboard;
+import fastmessage.telegram.TelegramUpdate;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
