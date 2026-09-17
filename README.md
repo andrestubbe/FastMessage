@@ -86,6 +86,13 @@ Standard messaging SDKs (TelegramBots, WhatsApp Java SDKs) suffer from fundament
 2. **Deterministic Transcoding**: In-place syntax translation between Telegram and WhatsApp markdown formatting.
 3. **High-Speed Routing**: Built-in LRU deduplication window and token-bucket rate limiting operating directly on primitive identifiers.
 
+| Feature | TelegramBots (Java) | WhatsApp Cloud SDK (Java) | FastMessage |
+|:---|:---|:---|:---|
+| **Webhook Ingestion** | Heavy Jackson / GSON DOM trees | Full JSON object deserialization | **Zero-copy `ByteSlice` raw buffer map** |
+| **Cross-Platform Bridge** | Not supported (Telegram only) | Not supported (WhatsApp only) | **Unified canonical `UniversalMessage`** |
+| **Format Transcoding** | Manual regex string replace | Manual formatting code | **In-place deterministic Markdown bridge** |
+| **Heap / GC Overhead** | High (temporary DTO objects) | High object allocations | **Zero GC hot path** |
+
 ---
 
 ## Key Features
